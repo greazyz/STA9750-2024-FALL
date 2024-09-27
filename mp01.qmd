@@ -1,11 +1,9 @@
 ---
 title: "mp01"
 editor: visual
-editor_options: 
-  chunk_output_type: console
 ---
 
-#Fiscal Characteristics of Major US Public Transit Systems
+# Fiscal Characteristics of Major US Public Transit Systems
 
 #### Gracie Zheng
 
@@ -13,7 +11,7 @@ In this mini project, I will be analyzing the fiscal characteristics of public t
 
 Given the data, I am downloading the files and cleaning and joining the fares and expenses tables.
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 library(tidyverse)
 
 FARES <- readxl::read_xlsx("2022_fare_revenue.xlsx") |>
@@ -49,7 +47,7 @@ FINANCIALS <- inner_join(FARES, EXPENSES, join_by(`NTD ID`, `Mode`))
 
 The third file is the monthly transit numbers.
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 library(tidyverse)
 TRIPS <- readxl::read_xlsx("ridership.xlsx", sheet="UPT") |>
   filter(`Mode/Type of Service Status` == "Active") |>
@@ -86,7 +84,7 @@ USAGE <- inner_join(TRIPS, MILES) |>
 
 #### Load the table with this code:
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 if(!require("DT")) install.packages("DT")
 library(DT)
 
@@ -99,14 +97,14 @@ sample_n(USAGE, 1000) |>
 
 First, I am renaming the "UZA Name" column to "metro_area".
 
-```{R echo=TRUE, message=FALSE}
+```{r}
 USAGE <- USAGE |>
        rename(metro_area = `UZA Name`)
 ```
 
 ### Task 2
 
-```{R, warning=FALSE, message=FALSE}
+```{r}
 unique_modes <- USAGE |> 
   distinct(Mode)
 
@@ -136,7 +134,7 @@ USAGE <- USAGE |>
 
 Then I reload the table with this code to make it look neater:
 
-```{R, echo = TRUE, message = FALSE}
+```{r}
 if(!require("DT")) install.packages("DT")
 library(DT)
  
@@ -156,7 +154,7 @@ datatable(
 
 1.  What transit *agency* had the most total VRM in our data set?
 
-```{R, echo = TRUE, message = FALSE}
+```{r}
   most_vrm_agency <- USAGE |>
   group_by(Agency) |>
   summarize(total_vrm = sum(VRM, na.rm = TRUE)) |>
@@ -169,7 +167,7 @@ The MTA New York City Transit had the most total VRM at 10832855350 miles.
 
 2.  What transit *mode* had the most total VRM in our data set?
 
-```{R, echo = TRUE, message = FALSE}
+```{r}
   most_vrm_mode <- USAGE |>
   group_by(Mode) |>
   summarize(total_vrm = sum(VRM, na.rm = TRUE)) |>
@@ -182,7 +180,7 @@ Bus mode had the most total VRM at 49444494088.
 
 3.  How many trips were taken on the NYC Subway (Heavy Rail) in May 2024?
 
-```{R, echo = TRUE, message = FALSE}
+```{r}
 nyc_subway_trips_may_2024 <- USAGE |>
   filter(Mode == "Heavy Rail", 
          Agency == "MTA New York City Transit",
@@ -192,7 +190,7 @@ print(nyc_subway_trips_may_2024)
 
 4.  How much did NYC subway ridership fall between April 2019 and April 2020?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 april_fall <- USAGE |> 
   filter(
     Mode == "Heavy Rail",    # Focus on subway (Heavy Rail)
@@ -206,11 +204,11 @@ april_fall <- USAGE |>
 print(april_fall)
 ```
 
-#### Task 4
+### Task 4
 
 1.  Which 3 Metro Areas have the lowest amount of Vehicle Revenue Miles?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 least3_vrm_metro <- USAGE |> 
   group_by(metro_area) |> 
   summarize(total_VRM = sum(VRM, na.rm = TRUE)) |> 
@@ -223,7 +221,7 @@ print(least3_vrm_metro)
 
 This question is aimed to find the metro area that covers the most distance per rider.
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 vrm_per_trip_metro <- USAGE |> 
   group_by(metro_area) |> 
   summarize(total_VRM = sum(VRM, na.rm = TRUE), 
@@ -236,7 +234,7 @@ print(vrm_per_trip_metro)
 
 3.  Which Agency is busiest in December?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 busiest_agency_december <- USAGE |> 
   filter(format(as.Date(month), "%m") == "12") |>  # Filter for December
   group_by(Agency) |> 
@@ -250,7 +248,7 @@ I am not sure what I was expecting, but it was not New York. I had a belief that
 
 ### Task 5
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 usage_2022_annual <- USAGE |>
 filter(year(month) == "2022") |>
   group_by(
@@ -269,7 +267,7 @@ print(usage_2022_annual)
 
 Recall the FINANCIALS table we created in the beginning I am also renaming the modes for financials so it shows in the table.
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 print(FINANCIALS)
 
 FINANCIALS <- FINANCIALS |>
@@ -299,7 +297,7 @@ FINANCIALS <- FINANCIALS |>
 
 Following this code, the two tables are merged:
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 USAGE_AND_FINANCIALS <- left_join(usage_2022_annual, 
            FINANCIALS, 
            join_by(`NTD ID`, Mode)) |>
@@ -308,7 +306,7 @@ USAGE_AND_FINANCIALS <- left_join(usage_2022_annual,
 
 Let's show the first 1,000!
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 sample_n(USAGE_AND_FINANCIALS, 1000) 
 ```
 
@@ -316,7 +314,7 @@ sample_n(USAGE_AND_FINANCIALS, 1000)
 
 Which transit system (agency and mode) had the most UPT in 2022?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 most_upt_2022 <- USAGE_AND_FINANCIALS |>
      group_by(Agency, Mode) |>
      filter(sum(Total_UPT, na.rm = TRUE) >= 400000) |>
@@ -330,7 +328,7 @@ The subway of the MTA New York City Transit system had the most UPT in 2022 at 1
 
 Which transit system (agency and mode) had the highest farebox recovery, defined as the highest ratio of Total Fares to Expenses?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 highest_farebox_recovery <- USAGE_AND_FINANCIALS |>
   mutate(farebox_recovery = `Total Fares` / Expenses) |>
   arrange(desc(farebox_recovery)) |>
@@ -344,7 +342,7 @@ In 2022, vanpooling of the Transit Authority of Central Kentucky had the highest
 
 Which transit system (agency and mode) has the lowest expenses per UPT?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 lowest_expenses_per_upt <- USAGE_AND_FINANCIALS |>
   mutate(expenses_per_upt = Expenses / Total_UPT) |>
   arrange(expenses_per_upt) |>
@@ -354,11 +352,11 @@ lowest_expenses_per_upt <- USAGE_AND_FINANCIALS |>
 print(lowest_expenses_per_upt)
 ```
 
-The transit system with the lowest expenses per UPT is the North Carolina State University bus with expenses per UPT at \$1.18.
+The transit system with the lowest expenses per UPT is the North Carolina State University bus with expenses per UPT at $1.18.
 
 Which transit system (agency and mode) has the highest total fares per UPT?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 highest_fares_per_upt <- USAGE_AND_FINANCIALS |>
   mutate(fares_per_upt = `Total Fares` / Total_UPT) |>
   arrange(desc(fares_per_upt)) |>
@@ -372,7 +370,7 @@ In 2022, the highest total fares per UPT is at the Altoona Metro Transit by Dema
 
 Which transit system (agency and mode) has the lowest expenses per VRM?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 lowest_expenses_per_vrm <- USAGE_AND_FINANCIALS |>
   mutate(expenses_per_vrm = Expenses / Total_VRM) |>
   arrange(expenses_per_vrm) |>
@@ -386,7 +384,7 @@ New Mexico Department of Transportation's vanpooling system has the lowest expen
 
 Which transit system (agency and mode) has the highest total fares per VRM?
 
-```{r, echo = TRUE, message = FALSE}
+```{r}
 highest_fares_per_vrm <- USAGE_AND_FINANCIALS |>
   mutate(fares_per_vrm = `Total Fares` / Total_VRM) |>
   arrange(desc(fares_per_vrm)) |>
