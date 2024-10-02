@@ -352,7 +352,7 @@ lowest_expenses_per_upt <- USAGE_AND_FINANCIALS |>
 print(lowest_expenses_per_upt)
 ```
 
-The transit system with the lowest expenses per UPT is the North Carolina State University bus with expenses per UPT at $1.18.
+The transit system with the lowest expenses per UPT is the North Carolina State University bus with expenses per UPT at \$1.18.
 
 Which transit system (agency and mode) has the highest total fares per UPT?
 
@@ -394,7 +394,7 @@ highest_fares_per_vrm <- USAGE_AND_FINANCIALS |>
 print(highest_fares_per_vrm)
 ```
 
-At $237, the Chicago Water Taxi's ferry has the highest total fares per VRM.
+At \$237, the Chicago Water Taxi's ferry has the highest total fares per VRM.
 
 ## Conclusion
 
