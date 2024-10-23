@@ -129,19 +129,21 @@ In Task 1, I will correct the column types of applicable tables, just like with 
 ```{r}
 TITLE_BASICS <- TITLE_BASICS |>
   mutate(
+    isAdult = as.logical(isAdult),
     startYear = as.numeric(startYear),    # Coerce
     endYear = as.numeric(endYear), # Coerce 
     runtimeMinutes = as.numeric(runtimeMinutes)
   )
-# I would love to show the updated table but the data is too large...
-#print(TITLE_BASICS)
+
+TITLE_EPISODES <- TITLE_EPISODES |>
+  mutate(seasonNumber = as.numeric(seasonNumber),
+         episodeNumber = as.numeric(episodeNumber))
 
 TITLE_RATINGS <- TITLE_RATINGS |>
   mutate(
     averageRating = as.numeric(averageRating),    # Coerce
     numVotes = as.numeric(numVotes )     # Coerce 
   )
-
 ```
 
 Looking through the IMDb dataset details on the site, I found that only TITLE_BASICS and TITLE_RATINGS needed to be corrected.
@@ -162,11 +164,11 @@ TITLE_movie <- TITLE_BASICS |>
   summarise(count = n())
 
 TITLE_tvseries <- TITLE_BASICS |>
-  filter(titleType == "tvseries") |>
+  filter(titleType == "tvSeries") |>
   summarise(count = n())
 
 TITLE_tvepisode <- TITLE_BASICS |>
-  filter(titleType == "tvepisode") |>
+  filter(titleType == "tvEpisode") |>
   summarise(count = n())
 
 # Print the result
@@ -175,8 +177,7 @@ print(TITLE_tvseries)
 print(TITLE_tvepisode)
 ```
 
-*From the filtered datasets, there are 132,220 movies, 0 TV series, and 0 TV episodes.*
-
+*From the filtered datasets, there are 132,220 movies, 29,986 TV series, and 156,725 TV episodes.*
 
 #### Who is the oldest living person in our data set?
 
@@ -193,6 +194,160 @@ oldest_living_p <- NAME_BASICS |>
 # Print the result
 print(oldest_living_p |> select(primaryName, birthYear ))
 ```
+
+*The oldest living person is Traudl Lessing, based on the data table. However, I know that is most definitely not true because she was born in 1625. When I check the [IMDb site](https://www.imdb.com/name/nm3545517/) of Traudl Lessing, I see that it is missing her death date. I will change show the top 20 oldest people. Someone must have entered data incorrectly. This really shows the importance of inputting data.*
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+
+# Filter for living people (i.e., no deathYear) and select the oldest one by birth year
+oldest_living_p <- NAME_BASICS |>
+  filter(is.na(deathYear) & !is.na(birthYear)) |>  # Only living people with known birthYear
+  arrange(birthYear) |>                             # Sort by birth year (ascending)
+  head(20)                                         # Select the top 3 (oldest) person
+
+# Print the result
+print(oldest_living_p |> select(primaryName, birthYear ))
+```
+
+*Unfortunately, the top 20 "oldest living" people based on the dataset of NAME_BASICS are all incorrect. To answer the question simply based on the data, it would be Traudl Lessing but I would need the deathYear inputted to all celebrities in order to answer the question.*
+
+#### There is one TV Episode in this data set with a perfect 10/10 rating and at least 200,000 IMDb ratings. What is it? What series does it belong to?
+
+```{r}
+library(dplyr)
+
+# Filter the ratings dataset for titles with a perfect 10/10 rating and at least 200,000 votes
+perfect_episodes <- TITLE_RATINGS |>
+  filter(averageRating == 10, numVotes >= 200000)
+
+# Join with the basics data to get more information about TV episodes
+perfect_tv_episode <- perfect_episodes |>
+  inner_join(TITLE_BASICS, by = "tconst") |>
+  filter(titleType == "tvEpisode")
+
+# Join with the episode dataset to find the series name
+perfect_tv_episode_show <- perfect_tv_episode |>
+  left_join(TITLE_EPISODES, by = "tconst") |>
+  left_join(TITLE_BASICS, by = join_by(parentTconst == tconst), suffix = c("_episode", "_series"))
+
+# Print the episode title and its parent series title
+perfect_tv_episode_show |>
+  select(primaryTitle_episode, primaryTitle_series) |>
+  print()
+
+```
+*It is episode Ozymandias from Breaking Bad.*
+
+#### What four projects is the actor Mark Hamill most known for?
+
+```{r}
+# Find Mark Hamill's entry using his name and extract his 'knownForTitles'
+mark_hamill <- NAME_BASICS|>
+  filter(primaryName == "Mark Hamill") |>
+  select(nconst, knownForTitles)
+
+# Split the knownForTitles (which is a comma-separated string) into individual tconsts
+known_titles <- unlist(strsplit(mark_hamill$knownForTitles, ","))
+
+# Filter the title.basics data to get information about Mark Hamill's "known for" titles
+mark_hamill_known_for <- TITLE_BASICS|>
+  filter(tconst %in% known_titles) |>
+  select(primaryTitle, titleType)
+
+# Print the result
+print(mark_hamill_known_for)
+```
+*Mark Hamill is most known for his roles in Star Wars!*
+
+#### What TV series, with more than 12 episodes, has the highest average rating?
+
+```{r}
+
+# Filter for TV episodes and join with episode details (parentTconst)
+tv_episodes <- TITLE_EPISODES|>
+  inner_join(TITLE_BASICS, by = c("tconst" = "tconst")) |>
+  filter(titleType == "tvEpisode") |>
+  select(tconst, parentTconst)
+
+# Count the number of episodes per series
+series_episode_counts <- tv_episodes|>
+  group_by(parentTconst) |>
+  summarise(episode_count = n()) |>
+  filter(episode_count > 12)  # Filter for series with more than 12 episodes
+
+# Calculate the average rating for each series based on episode ratings
+series_avg_rating <- tv_episodes|>
+  inner_join(TITLE_RATINGS, by = "tconst") |>
+  inner_join(series_episode_counts, by = "parentTconst") |>
+  group_by(parentTconst) |>
+  summarise(average_series_rating = mean(averageRating, na.rm = TRUE))|>
+  arrange(desc(average_series_rating))  # Sort by highest average rating
+
+# Join with the basics dataset to get series titles
+top_rated_series <- series_avg_rating|>
+  inner_join(TITLE_BASICS, by = c("parentTconst" = "tconst")) |>
+  select(primaryTitle, average_series_rating) |>
+  slice(1)  # Get the series with the highest average rating
+
+# Print the result
+print(top_rated_series)
+```
+*The Kayva TV series has the highest average rating of 9.75.*
+
+#### The TV series Happy Days (1974-1984) gives us the common idiom “jump the shark”. The phrase comes from a controversial fifth season episode (aired in 1977) in which a lead character literally jumped over a shark on water skis. Idiomatically, it is used to refer to the moment when a once-great show becomes ridiculous and rapidly looses quality. Is it true that episodes from later seasons of Happy Days have lower average ratings than the early seasons?
+
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+
+# Find the tconst for Happy Days
+happy_days_series <- TITLE_BASICS |>
+  filter(primaryTitle == "Happy Days" & titleType == "tvSeries") |>
+  select(tconst)
+
+# Filter for Happy Days episodes from title_episode
+happy_days_episodes <- TITLE_EPISODES |>
+  filter(parentTconst == happy_days_series$tconst)  |>
+  select(tconst, seasonNumber, episodeNumber)
+```
+
+```{r}
+library(ggplot2)
+
+# Join with ratings data to get episode ratings
+happy_days_ratings <- happy_days_episodes |>
+  inner_join(TITLE_RATINGS, by = "tconst")  |>
+  filter(!is.na(seasonNumber))  # Exclude episodes without season information
+
+# Define early seasons (1-5) and later seasons (6 and beyond)
+happy_days_ratings <- happy_days_ratings |>
+  mutate(season_group = ifelse(seasonNumber <= 5, "Early Seasons (1-5)", "Later Seasons (6+)"))
+
+# Calculate the average rating for early and later seasons
+season_group_avg <- happy_days_ratings |>
+  group_by(season_group) |>
+  summarise(average_rating = mean(averageRating, na.rm = TRUE),
+            episode_count = n())
+
+# Print the average ratings for early and later seasons
+print(season_group_avg)
+
+# Plot average ratings of early vs later seasons
+ggplot(season_group_avg, aes(x = season_group, y = average_rating, fill = season_group)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Ratings: Early vs Later Seasons of Happy Days",
+       x = "Season Group",
+       y = "Average Rating") +
+  theme_minimal()
+```
+*Based on the histogram, yes, it is true that the ratings of _Happy Days_ got lower as the show progressed.*
+
+
+
+
+
 
 
 
