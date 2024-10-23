@@ -1,0 +1,198 @@
+---
+title: "Mp02"
+author: "Gracie Zheng"
+editor: visual
+---
+
+# The Business of Show Business
+
+As a Hollywood development director, I am always looking into the next **BIG** thing. To make the biggest movie of 2025 and be invited to Cannes Film Festival, I will dive into the data of movies to find the perfect opportunity.
+
+## Datasets for Research
+
+Credits to IMDb, with their expansive library of movies, I will use their datasets for my research. The code to extract the data is as follows:
+
+```{r}
+get_imdb_file <- function(fname){
+    BASE_URL <- "https://datasets.imdbws.com/"
+    fname_ext <- paste0(fname, ".tsv.gz")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL, fname_ext)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+    as.data.frame(readr::read_tsv(fname_ext, lazy=FALSE))
+}
+
+NAME_BASICS      <- get_imdb_file("name.basics")
+TITLE_BASICS     <- get_imdb_file("title.basics")
+TITLE_EPISODES   <- get_imdb_file("title.episode")
+TITLE_RATINGS    <- get_imdb_file("title.ratings")
+TITLE_CREW       <- get_imdb_file("title.crew")
+TITLE_PRINCIPALS <- get_imdb_file("title.principals")
+```
+
+## Data Sub-Sampling
+
+With such a huge dataset, I narrow down to people with at least 2 "known for" credits.
+
+```{r}
+# make sure to run this
+library(stringr)
+NAME_BASICS <- NAME_BASICS |> 
+    filter(str_count(knownForTitles, ",") > 1)
+```
+
+Then I narrow down titles through rating count. Pictured below is a visualization of the distribution of rating counts across the titles:
+
+```{r}
+#make sure to
+install.packages("ggplot2")
+#load 
+library(ggplot2)
+
+TITLE_RATINGS |>
+    ggplot(aes(x=numVotes)) + 
+    geom_histogram(bins=30) +
+    xlab("Number of IMDB Ratings") + 
+    ylab("Number of Titles") + 
+    ggtitle("Majority of IMDB Titles Have Less than 100 Ratings") + 
+    theme_bw() + 
+    scale_x_log10(label = scales::comma) + 
+    scale_y_continuous(label = scales::comma)
+
+print(ggplot)
+```
+
+About 75% of the dataset is has less than 100 ratings and we can see this through quantile distribution:
+
+```{r}
+#load library(dplyr) for function "pull"
+library(dplyr)
+TITLE_RATINGS |>
+    pull(numVotes) |>
+    quantile()
+```
+
+Through this step, I filter the data to only view titles with 100 or more ratings:
+
+```{r}
+TITLE_RATINGS <- TITLE_RATINGS |>
+    filter(numVotes >= 100)
+```
+
+This filtering is then applied to the rest of the data tables:
+
+```{r}
+TITLE_BASICS <- TITLE_BASICS |>
+    semi_join(TITLE_RATINGS, 
+              join_by(tconst == tconst))
+
+TITLE_CREW <- TITLE_CREW |>
+    semi_join(TITLE_RATINGS, 
+              join_by(tconst == tconst))
+
+TITLE_EPISODES_1 <- TITLE_EPISODES |>
+    semi_join(TITLE_RATINGS, 
+              join_by(tconst == tconst))
+TITLE_EPISODES_2 <- TITLE_EPISODES |>
+    semi_join(TITLE_RATINGS, 
+              join_by(parentTconst == tconst))
+
+TITLE_EPISODES <- bind_rows(TITLE_EPISODES_1,
+                            TITLE_EPISODES_2) |>
+    distinct()
+
+TITLE_PRINCIPALS <- TITLE_PRINCIPALS |>
+    semi_join(TITLE_RATINGS, join_by(tconst == tconst))
+
+
+rm(TITLE_EPISODES_1)
+rm(TITLE_EPISODES_2)
+```
+
+From the IMDb site, I see that columns that should be set as numeric type are set as character (string) vectors. I change this by using the following command:
+
+```{r}
+# Load dplyr library
+library(dplyr)
+
+NAME_BASICS <- NAME_BASICS |>
+    mutate(birthYear = as.numeric(birthYear),
+           deathYear = as.numeric(deathYear))
+```
+
+### Task 1
+
+In Task 1, I will correct the column types of applicable tables, just like with the NAME_BASICS table.
+
+```{r}
+TITLE_BASICS <- TITLE_BASICS |>
+  mutate(
+    startYear = as.numeric(startYear),    # Coerce
+    endYear = as.numeric(endYear), # Coerce 
+    runtimeMinutes = as.numeric(runtimeMinutes)
+  )
+# I would love to show the updated table but the data is too large...
+#print(TITLE_BASICS)
+
+TITLE_RATINGS <- TITLE_RATINGS |>
+  mutate(
+    averageRating = as.numeric(averageRating),    # Coerce
+    numVotes = as.numeric(numVotes )     # Coerce 
+  )
+
+```
+
+Looking through the IMDb dataset details on the site, I found that only TITLE_BASICS and TITLE_RATINGS needed to be corrected.
+
+### Task 2
+
+Using dplyr functionality, I will answer these questions:
+
+#### How many movies are in our data set? How many TV series? How many TV episodes?
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+
+# Count the number
+TITLE_movie <- TITLE_BASICS |>
+  filter(titleType == "movie") |>
+  summarise(count = n())
+
+TITLE_tvseries <- TITLE_BASICS |>
+  filter(titleType == "tvseries") |>
+  summarise(count = n())
+
+TITLE_tvepisode <- TITLE_BASICS |>
+  filter(titleType == "tvepisode") |>
+  summarise(count = n())
+
+# Print the result
+print(TITLE_movie)
+print(TITLE_tvseries)
+print(TITLE_tvepisode)
+```
+
+*From the filtered datasets, there are 132,220 movies, 0 TV series, and 0 TV episodes.*
+
+
+#### Who is the oldest living person in our data set?
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+
+# Filter for living people (i.e., no deathYear) and select the oldest one by birth year
+oldest_living_p <- NAME_BASICS |>
+  filter(is.na(deathYear) & !is.na(birthYear)) |>  # Only living people with known birthYear
+  arrange(birthYear) |>                             # Sort by birth year (ascending)
+  slice(1)                                           # Select the first (oldest) person
+
+# Print the result
+print(oldest_living_p |> select(primaryName, birthYear ))
+```
+
+
+
