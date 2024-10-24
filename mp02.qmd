@@ -12,11 +12,13 @@ As a Hollywood development director, I am always looking into the next **BIG** t
 
 Credits to IMDb, with their expansive library of movies, I will use their datasets for my research. The code to extract the data is as follows:
 
-```{r include = FALSE}
+```{r warning=FALSE, message=FALSE, error=FALSE}
 #libraries 
 library(stringr)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
+library(gt)
 
 get_imdb_file <- function(fname) {
   BASE_URL <- "https://github.com/michaelweylandt/STA9750/raw/main/miniprojects/mini02_preprocessed/"
@@ -68,8 +70,6 @@ TITLE_RATINGS |>
     theme_bw() + 
     scale_x_log10(label = scales::comma) + 
     scale_y_continuous(label = scales::comma)
-
-print(ggplot)
 ```
 
 About 75% of the dataset is has less than 100 ratings and we can see this through quantile distribution:
@@ -121,10 +121,7 @@ rm(TITLE_EPISODES_2)
 
 From the IMDb site, I see that columns that should be set as numeric type are set as character (string) vectors. I change this by using the following command:
 
-```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
-# Load dplyr library
-library(dplyr)
-
+```{r warning=FALSE, message=FALSE, error=FALSE}
 NAME_BASICS <- NAME_BASICS |>
     mutate(birthYear = as.numeric(birthYear),
            deathYear = as.numeric(deathYear))
@@ -134,7 +131,7 @@ NAME_BASICS <- NAME_BASICS |>
 
 In Task 1, I will correct the column types of applicable tables, just like with the NAME_BASICS table.
 
-```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
+```{r warning=FALSE, message=FALSE, error=FALSE}
 TITLE_BASICS <- TITLE_BASICS |>
   mutate(
     isAdult = as.logical(isAdult),
@@ -162,10 +159,8 @@ Using dplyr functionality, I will answer these questions:
 
 #### How many movies are in our data set? How many TV series? How many TV episodes?
 
-```{r}
-# Load necessary libraries
-library(dplyr)
-
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Count the number
 TITLE_movie <- TITLE_BASICS |>
   filter(titleType == "movie") |>
@@ -179,7 +174,6 @@ TITLE_tvepisode <- TITLE_BASICS |>
   filter(titleType == "tvEpisode") |>
   summarise(count = n())
 
-# Print the result
 print(TITLE_movie)
 print(TITLE_tvseries)
 print(TITLE_tvepisode)
@@ -189,33 +183,25 @@ print(TITLE_tvepisode)
 
 #### Who is the oldest living person in our data set?
 
-```{r}
-# Load necessary libraries
-library(dplyr)
-
-# Filter for living people (i.e., no deathYear) and select the oldest one by birth year
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 oldest_living_p <- NAME_BASICS |>
   filter(is.na(deathYear) & !is.na(birthYear)) |>  # Only living people with known birthYear
   arrange(birthYear) |>                             # Sort by birth year (ascending)
   slice(1)                                           # Select the first (oldest) person
 
-# Print the result
 print(oldest_living_p |> select(primaryName, birthYear ))
 ```
 
 *The oldest living person is Traudl Lessing, based on the data table. However, I know that is most definitely not true because she was born in 1625. When I check the [IMDb site](https://www.imdb.com/name/nm3545517/) of Traudl Lessing, I see that it is missing her death date. I will change show the top 20 oldest people. Someone must have entered data incorrectly. This really shows the importance of inputting data.*
 
-```{r}
-# Load necessary libraries
-library(dplyr)
-
-# Filter for living people (i.e., no deathYear) and select the oldest one by birth year
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 oldest_living_p <- NAME_BASICS |>
   filter(is.na(deathYear) & !is.na(birthYear)) |>  # Only living people with known birthYear
   arrange(birthYear) |>                             # Sort by birth year (ascending)
   head(20)                                         # Select the top 3 (oldest) person
 
-# Print the result
 print(oldest_living_p |> select(primaryName, birthYear ))
 ```
 
@@ -223,9 +209,8 @@ print(oldest_living_p |> select(primaryName, birthYear ))
 
 #### There is one TV Episode in this data set with a perfect 10/10 rating and at least 200,000 IMDb ratings. What is it? What series does it belong to?
 
-```{r}
-library(dplyr)
-
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Filter the ratings dataset for titles with a perfect 10/10 rating and at least 200,000 votes
 perfect_episodes <- TITLE_RATINGS |>
   filter(averageRating == 10, numVotes >= 200000)
@@ -240,18 +225,17 @@ perfect_tv_episode_show <- perfect_tv_episode |>
   left_join(TITLE_EPISODES, by = "tconst") |>
   left_join(TITLE_BASICS, by = join_by(parentTconst == tconst), suffix = c("_episode", "_series"))
 
-# Print the episode title and its parent series title
 perfect_tv_episode_show |>
   select(primaryTitle_episode, primaryTitle_series) |>
   print()
-
 ```
 
 *It is episode Ozymandias from Breaking Bad.*
 
 #### What four projects is the actor Mark Hamill most known for?
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Find Mark Hamill's entry using his name and extract his 'knownForTitles'
 mark_hamill <- NAME_BASICS|>
   filter(primaryName == "Mark Hamill") |>
@@ -265,7 +249,6 @@ mark_hamill_known_for <- TITLE_BASICS|>
   filter(tconst %in% known_titles) |>
   select(primaryTitle, titleType)
 
-# Print the result
 print(mark_hamill_known_for)
 ```
 
@@ -273,7 +256,8 @@ print(mark_hamill_known_for)
 
 #### What TV series, with more than 12 episodes, has the highest average rating?
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 # Filter for TV episodes and join with episode details (parentTconst)
 tv_episodes <- TITLE_EPISODES|>
@@ -301,7 +285,6 @@ top_rated_series <- series_avg_rating|>
   select(primaryTitle, average_series_rating) |>
   slice(1)  # Get the series with the highest average rating
 
-# Print the result
 print(top_rated_series)
 ```
 
@@ -309,8 +292,8 @@ print(top_rated_series)
 
 #### The TV series Happy Days (1974-1984) gives us the common idiom “jump the shark”. The phrase comes from a controversial fifth season episode (aired in 1977) in which a lead character literally jumped over a shark on water skis. Idiomatically, it is used to refer to the moment when a once-great show becomes ridiculous and rapidly looses quality. Is it true that episodes from later seasons of Happy Days have lower average ratings than the early seasons?
 
-```{r, message = FALSE, warning = FALSE}
-library(dplyr)
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 # Find the tconst for Happy Days
 happy_days_series <- TITLE_BASICS |>
@@ -325,8 +308,8 @@ happy_days_episodes <- TITLE_EPISODES |>
 
 I have selected the columns I am looking at. I will put it into a visualization to answer the questions.
 
-```{r}
-library(ggplot2)
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 # Join with ratings data to get episode ratings
 happy_days_ratings <- happy_days_episodes |>
@@ -365,7 +348,8 @@ A "success" measure that reflects both quality and popular awareness will includ
 
 #### Choose the top 5-10 movies on your metric and confirm that they were indeed box office successes.
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 # Create a success metric
 TITLE_RATINGS <- TITLE_RATINGS |>
@@ -373,20 +357,20 @@ TITLE_RATINGS <- TITLE_RATINGS |>
 
 top_movies <- TITLE_RATINGS |>
   arrange(desc(success_metric))  |>
-  slice(1:10)  # Select the top 10 movies based on the success metric
+  slice(1:10)  # Select the top 10 movies
 
 # Join with the basics dataset to get movie titles for validation
 top_movies_with_titles <- top_movies |>
   inner_join(TITLE_BASICS, by = "tconst")  |>
   select(primaryTitle, averageRating, numVotes, success_metric)  # Display relevant info
 
-# Print the top movies with titles and success metric
 print(top_movies_with_titles %>% select(primaryTitle, success_metric))
 ```
 
 #### Choose 3-5 movies with large numbers of IMDb votes that score poorly on your success metric and confirm that they are indeed of low quality.
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 # Filter for movies with large numbers of votes and low success metric. Assuming 'large' is more than 100,000 votes
 low_success_movies <- TITLE_RATINGS |>
@@ -399,7 +383,6 @@ low_success_movies_with_titles <- low_success_movies %>%
   inner_join(TITLE_BASICS, by = "tconst") %>%
   select(primaryTitle, averageRating, numVotes, success_metric)  # Display relevant info
 
-# Print the bottom 5 movies with titles and metrics
 print(low_success_movies_with_titles)
 ```
 
@@ -422,7 +405,8 @@ nolan_projects <- TITLE_PRINCIPALS|>
 
 I found Christopher Nolan within the Name table and Principals title. Now I will join them the success metric in the ratings table then join with title_basic to get project titles.
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Join Nolan's projects with the ratings data to calculate success metrics
 nolan_projects_ratings <- nolan_projects|>
   inner_join(TITLE_RATINGS, by = "tconst") |>
@@ -441,7 +425,8 @@ print(nolan_projects_with_titles)
 
 One more "spot check" can be to see if Oscar-winning movies have a high success score. I looked up some movies to manually input into the code to check.
 
-```{r}
+```{r{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # List of famous Oscar-winning movies (Best Picture winners)
 oscar_winners <- c("The Godfather", "Schindler's List", "The Silence of the Lambs", 
                    "Forrest Gump", "Gladiator", "No Country for Old Men", "Parasite")
@@ -456,7 +441,6 @@ oscar_winner_ratings <- oscar_winner_movies |>
   inner_join(TITLE_RATINGS, by = "tconst")  |>
   mutate(success_metric = averageRating * log(numVotes + 1))
 
-# Display the results to validate if these Oscar-winning movies score highly
 oscar_winner_ratings |>
   select(primaryTitle, averageRating, numVotes, success_metric)  |>
   arrange(desc(success_metric))  |>
@@ -465,7 +449,8 @@ oscar_winner_ratings |>
 
 A numerical threshold of what "success" means for a project can be picked by looking at the quantile distribution of ratings across all movies.
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 # Step 1: Inspect the distribution of the success metric
 summary(TITLE_RATINGS$success_metric)
@@ -473,7 +458,6 @@ summary(TITLE_RATINGS$success_metric)
 # Step 2: Determine the 75th percentile (or another quantile) as the threshold for a 'solid' movie
 threshold <- quantile(TITLE_RATINGS$success_metric, 0.75)
 
-# Print the threshold value
 print(paste("Threshold for a 'solid' movie: ", threshold))
 ```
 
@@ -481,8 +465,8 @@ print(paste("Threshold for a 'solid' movie: ", threshold))
 
 Now, it is time to pick a genre for my movie. For research, I am looking at a couple questions. My first question is **What was the genre with the most “successes” in each decade?**
 
-```{r}
-library(tidyr)
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 successful_movies <- TITLE_RATINGS %>%
   filter(success_metric > threshold)
@@ -511,13 +495,11 @@ most_successful_genres_per_decade <- genre_counts_by_decade %>%
   group_by(decade) %>%
   slice_max(success_count, n = 1)  # Get the genre with the highest count per decade
 
-# Print the most successful genre for each decade
 print(most_successful_genres_per_decade)
 ```
 
-```{r}
-
-# Plotting the most successful genres per decade
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 ggplot(most_successful_genres_per_decade, aes(x = factor(decade), y = success_count, fill = genres)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(title = "Most Successful Genres Per Decade",
@@ -529,38 +511,37 @@ ggplot(most_successful_genres_per_decade, aes(x = factor(decade), y = success_co
 
 My next set of questions are **What genre has produced the most “successes” since 2010? Does it have the highest success rate or does it only have a large number of successes because there are many productions in that genre?**
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Filter for movies produced since 2010 and for successes
 successful_movies_since_2010 <- TITLE_RATINGS %>%
   inner_join(TITLE_BASICS, by = "tconst") %>%
   filter(as.numeric(startYear) >= 2010) %>%  # Movies from 2010 onwards
   filter(success_metric > threshold)  # Only successful movies
 
-# Step 3: Separate genres (in case of multiple genres in a single string)
+# Separate genres (in case of multiple genres in a single string)
 successful_movies_since_2010 <- successful_movies_since_2010 %>%
   separate_rows(genres, sep = ",")
 
-# Step 4: Count the number of successes per genre
+# Count the number of successes per genre
 genre_success_count <- successful_movies_since_2010 %>%
   group_by(genres) %>%
   summarise(success_count = n()) %>%
   arrange(desc(success_count))
 
-# Step 5: Calculate the total number of productions per genre since 2010
+# Calculate the total number of productions per genre since 2010
 total_movies_per_genre <- TITLE_BASICS %>%
   filter(as.numeric(startYear) >= 2010) %>%
   separate_rows(genres, sep = ",") %>%
   group_by(genres) %>%
   summarise(total_count = n())
 
-# Step 6: Join the success count with the total production count and calculate success rate
+# Join the success count with the total production count and calculate success rate
 genre_success_rate <- genre_success_count %>%
   inner_join(total_movies_per_genre, by = "genres") %>%
   mutate(success_rate = success_count / total_count) %>%
   arrange(desc(success_rate))
 
-# Step 7: Print the genre with the most successes and the success rate
-print(genre_success_rate)
 ggplot(genre_success_rate, aes(x = success_count, y = success_rate, label = genres)) +
   geom_point(color = "blue", size = 3) +
   geom_text(vjust = -1, size = 3) +  # Add genre labels to the points
@@ -582,8 +563,8 @@ Particularly, I am interested in the subgenre Epic, described as "grand and swee
 
 Based on my interest in pursuing a drama movie, set in the subgenre epic, I would like to create a team with Christopher Nolan as the director. He has experience in creating drama movies that are "successful".
 
-```{r}
-
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Join Christopher Nolan's projects with the title.basics dataset to get genres
 nolan_projects_with_genres <- nolan_projects %>%
   inner_join(TITLE_BASICS, by = "tconst") %>%
@@ -593,9 +574,8 @@ nolan_projects_with_genres <- nolan_projects %>%
 # Join with the ratings dataset to calculate success metrics for drama movies
 nolan_drama_success <- nolan_projects_with_genres %>%
   inner_join(TITLE_RATINGS, by = "tconst") %>%
-  mutate(success_metric = averageRating * log(numVotes + 1))  # Calculate success metric
+  mutate(success_metric = averageRating * log(numVotes + 1))
 
-# Print Christopher Nolan's drama movies based on success metric
 cat("Christopher Nolan's Successful Drama Movies:\n")
 print(nolan_drama_success %>%
   select(primaryTitle, startYear, averageRating, numVotes, success_metric) %>%
@@ -604,9 +584,8 @@ print(nolan_drama_success %>%
 
 An established actor I would like to add to the team is Leonardo DiCaprio. Not only is he but he has worked on projects with Christopher Nolan in the past.
 
-```{r}
-
-library(gt)
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 
 # Find Leonardo DiCaprio's nconst (unique identifier for individuals)
 leonardo <- NAME_BASICS %>%
@@ -638,23 +617,24 @@ leonardo_success %>%
 
 This table proves that Leonardo DiCaprio is a great actor! An up and coming actor that I would like to bring is Timothée Chalamet. His most recent work is Dune, an American epic science fiction film based off the book series, Dune.
 
-```{r}
-# Step 2: Find Timothée Chalamet's nconst (unique identifier for individuals)
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
+# Find Timothée Chalamet's nconst (unique identifier for individuals)
 timothee <- NAME_BASICS %>%
   filter(primaryName == "Timothée Chalamet") %>%
   select(nconst)
 
-# Step 3: Get all projects where Timothée Chalamet is an actor
+# Get all projects where Timothée Chalamet is an actor
 timothee_projects <- TITLE_PRINCIPALS %>%
   filter(nconst == timothee$nconst, category == "actor") %>%
   select(tconst)
 
-# Step 4: Join Timothée Chalamet's projects with the ratings data to calculate success metrics
+# Join Timothée Chalamet's projects with the ratings data to calculate success metrics
 timothee_ratings <- timothee_projects %>%
   inner_join(TITLE_RATINGS, by = "tconst") %>%
   mutate(success_metric = averageRating * log(numVotes + 1))  # Success metric calculation
 
-# Step 5: Join with title.basics to get the titles and release years for validation
+# Join with title.basics to get the titles and release years for validation
 timothee_success <- timothee_ratings %>%
   inner_join(TITLE_BASICS, by = "tconst") %>%
   select(primaryTitle, startYear, averageRating, numVotes, success_metric) %>%
@@ -675,7 +655,8 @@ Surprisingly, I did not know that Timothée Chamalet was also in a Christopher N
 
 Of course, now it is time to create a killer plot. One way is to look at and remake a classic film. The criteria for a classic film is as follows: \* large number of IMDb ratings \>100,000 \* high average rating \>8 \* have not been remade in the past 25 years
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Filter for movies released before 1999 (at least 25 years old)
 classic_movies <- TITLE_BASICS %>%
   filter(titleType == "movie" & as.numeric(startYear) < 1999)
@@ -689,7 +670,7 @@ classic_movies_with_ratings <- classic_movies %>%
 top_classic_movies <- classic_movies_with_ratings %>%
   arrange(desc(averageRating), desc(numVotes))
 
-# Step 5: Exclude movies that have been remade in the past 25 years
+# Exclude movies that have been remade in the past 25 years
 remade_movies <- TITLE_BASICS %>%
   filter(titleType == "remake" & as.numeric(startYear) >= 1999)
 
@@ -705,7 +686,8 @@ classic_movies_to_remake |>
 
 From the list, I would like to remake *Schindler's List*, a movie based during World War II. Since the movie was made in 1993, I believe most of the cast is still around.
 
-```{r}
+```{r warning=FALSE, message=FALSE, error=FALSE}
+#| code-fold: true
 # Find the tconst for Schindler's List
 schindlers_list <- TITLE_BASICS %>%
   filter(primaryTitle == "Schindler's List" & titleType == "movie") %>%
@@ -716,12 +698,12 @@ key_talent <- TITLE_PRINCIPALS %>%
   filter(tconst == schindlers_list$tconst & category %in% c("actor", "director", "writer")) %>%
   select(nconst, category)
 
-# Step 4: Join with the name.basics dataset to check if they are still alive
+# Join with the name.basics dataset to check if they are still alive
 key_talent_info <- key_talent %>%
   inner_join(NAME_BASICS, by = "nconst") %>%
   select(primaryName, category, birthYear, deathYear)  # Select relevant info
 
-# Step 5: Filter for those who are still alive (deathYear is NA)
+# Filter for those who are still alive (deathYear is NA)
 still_alive <- key_talent_info %>%
   filter(is.na(deathYear))
 
