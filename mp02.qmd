@@ -1,5 +1,5 @@
 ---
-title: "Mp02"
+title: "The Business of Show Business "
 author: "Gracie Zheng"
 editor: visual
 ---
@@ -12,8 +12,12 @@ As a Hollywood development director, I am always looking into the next **BIG** t
 
 Credits to IMDb, with their expansive library of movies, I will use their datasets for my research. The code to extract the data is as follows:
 
-```{r}
-##loading the data files
+```{r include = FALSE}
+#libraries 
+library(stringr)
+library(dplyr)
+library(ggplot2)
+
 get_imdb_file <- function(fname) {
   BASE_URL <- "https://github.com/michaelweylandt/STA9750/raw/main/miniprojects/mini02_preprocessed/"
   fname_ext <- paste0(fname, ".csv.zip")
@@ -47,19 +51,13 @@ TITLE_PRINCIPALS <- get_imdb_file("title_principals_small")
 With such a huge dataset, I narrow down to people with at least 2 "known for" credits.
 
 ```{r}
-# make sure to run this
-library(stringr)
-library(dplyr)
 NAME_BASICS <- NAME_BASICS |> 
     filter(str_count(knownForTitles, ",") > 1)
 ```
 
 Then I narrow down titles through rating count. Pictured below is a visualization of the distribution of rating counts across the titles:
 
-```{r}
-#make sure to
-#load 
-library(ggplot2)
+```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 
 TITLE_RATINGS |>
     ggplot(aes(x=numVotes)) + 
@@ -76,9 +74,7 @@ print(ggplot)
 
 About 75% of the dataset is has less than 100 ratings and we can see this through quantile distribution:
 
-```{r}
-#load library(dplyr) for function "pull"
-library(dplyr)
+```{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 TITLE_RATINGS |>
     pull(numVotes) |>
     quantile()
@@ -94,6 +90,8 @@ TITLE_RATINGS <- TITLE_RATINGS |>
 This filtering is then applied to the rest of the data tables:
 
 ```{r}
+#| code-fold: true
+
 TITLE_BASICS <- TITLE_BASICS |>
     semi_join(TITLE_RATINGS, 
               join_by(tconst == tconst))
@@ -123,7 +121,7 @@ rm(TITLE_EPISODES_2)
 
 From the IMDb site, I see that columns that should be set as numeric type are set as character (string) vectors. I change this by using the following command:
 
-```{r}
+```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 # Load dplyr library
 library(dplyr)
 
@@ -136,7 +134,7 @@ NAME_BASICS <- NAME_BASICS |>
 
 In Task 1, I will correct the column types of applicable tables, just like with the NAME_BASICS table.
 
-```{r}
+```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 TITLE_BASICS <- TITLE_BASICS |>
   mutate(
     isAdult = as.logical(isAdult),
@@ -734,9 +732,9 @@ still_alive |>
 
 ## The Pitch
 
-Through the decades, drama films have been increasing in popularity, completely dominating all other genres in the industry with 32,460 movies made since 2010. Combined with other competing genres of adventure, crime, action, and comedy, I would like to create an epic drama. 
+Through the decades, drama films have been increasing in popularity, completely dominating all other genres in the industry with 32,460 movies made since 2010. Combined with other competing genres of adventure, crime, action, and comedy, I would like to create an epic drama.
 
-This movie will be directed by Christopher Nolan, an expert at drama movies. With 6 movies in the drama genre, all are above the success metric of 49.02. Alongside director Nolan, I would like to bring on Leonardo DiCaprio, a Hollywood icon who has played various roles throughout his career. Another actor I would like to bring in is Timothee Chalamet who played in Dune, an epic science fiction movie. With Chalamet’s background, he would fit this new movie concept very well. One fun fact is that both actors have worked with director Nolan separately before, on *Inception* and *Interstellar*. 
+This movie will be directed by Christopher Nolan, an expert at drama movies. With 6 movies in the drama genre, all are above the success metric of 49.02. Alongside director Nolan, I would like to bring on Leonardo DiCaprio, a Hollywood icon who has played various roles throughout his career. Another actor I would like to bring in is Timothee Chalamet who played in Dune, an epic science fiction movie. With Chalamet’s background, he would fit this new movie concept very well. One fun fact is that both actors have worked with director Nolan separately before, on *Inception* and *Interstellar*.
 
 The story will be based of off *Schindler’s List*, a 1993 film set in World War II taken from a true story of Oskar Schindler The film focuses on his transformation from a business man to a humanitarian through the factory he runs. This story will captivate today's audience, as we are continually surrounded by global conflicts.
 
