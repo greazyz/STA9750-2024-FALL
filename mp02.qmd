@@ -13,23 +13,33 @@ As a Hollywood development director, I am always looking into the next **BIG** t
 Credits to IMDb, with their expansive library of movies, I will use their datasets for my research. The code to extract the data is as follows:
 
 ```{r}
-get_imdb_file <- function(fname){
-    BASE_URL <- "https://datasets.imdbws.com/"
-    fname_ext <- paste0(fname, ".tsv.gz")
-    if(!file.exists(fname_ext)){
-        FILE_URL <- paste0(BASE_URL, fname_ext)
-        download.file(FILE_URL, 
-                      destfile = fname_ext)
-    }
-    as.data.frame(readr::read_tsv(fname_ext, lazy=FALSE))
+##loading the data files
+get_imdb_file <- function(fname) {
+  BASE_URL <- "https://github.com/michaelweylandt/STA9750/raw/main/miniprojects/mini02_preprocessed/"
+  fname_ext <- paste0(fname, ".csv.zip")
+  
+  if (!file.exists(fname_ext)) {
+    FILE_URL <- paste0(BASE_URL, fname_ext)
+    download.file(FILE_URL, destfile = fname_ext)
+  }
+  
+  # Unzip the file and read the CSV
+  temp_file <- unzip(fname_ext, list = TRUE)$Name[1]  # Get the name of the first file inside the ZIP
+  unzip(fname_ext)  # Unzip the file
+  as.data.frame(readr::read_csv(temp_file)) 
 }
 
-NAME_BASICS      <- get_imdb_file("name.basics")
-TITLE_BASICS     <- get_imdb_file("title.basics")
-TITLE_EPISODES   <- get_imdb_file("title.episode")
-TITLE_RATINGS    <- get_imdb_file("title.ratings")
-TITLE_CREW       <- get_imdb_file("title.crew")
-TITLE_PRINCIPALS <- get_imdb_file("title.principals")
+NAME_BASICS     <- get_imdb_file("name_basics_small")
+
+TITLE_BASICS     <- get_imdb_file("title_basics_small")
+
+TITLE_EPISODES   <- get_imdb_file("title_episodes_small")
+
+TITLE_RATINGS    <- get_imdb_file("title_ratings_small")
+
+TITLE_CREW       <- get_imdb_file("title_crew_small")
+
+TITLE_PRINCIPALS <- get_imdb_file("title_principals_small") 
 ```
 
 ## Data Sub-Sampling
@@ -39,6 +49,7 @@ With such a huge dataset, I narrow down to people with at least 2 "known for" cr
 ```{r}
 # make sure to run this
 library(stringr)
+library(dplyr)
 NAME_BASICS <- NAME_BASICS |> 
     filter(str_count(knownForTitles, ",") > 1)
 ```
@@ -47,7 +58,6 @@ Then I narrow down titles through rating count. Pictured below is a visualizatio
 
 ```{r}
 #make sure to
-install.packages("ggplot2")
 #load 
 library(ggplot2)
 
@@ -317,7 +327,6 @@ happy_days_episodes <- TITLE_EPISODES |>
 
 I have selected the columns I am looking at. I will put it into a visualization to answer the questions.
 
-
 ```{r}
 library(ggplot2)
 
@@ -354,18 +363,17 @@ ggplot(season_group_avg, aes(x = season_group, y = average_rating, fill = season
 
 A "success" measure that reflects both quality and popular awareness will include average ratings and number of votes. A common approach is to compute a weighted score of both of these factors so it looks like `success = averageRating x log(numVotes)`
 
+## Task 3
+
 #### Choose the top 5-10 movies on your metric and confirm that they were indeed box office successes.
 
 ```{r}
 
-# Load necessary libraries
-library(dplyr)
-
 # Create a success metric
-metric <- TITLE_RATINGS |>
+TITLE_RATINGS <- TITLE_RATINGS |>
   mutate(success_metric = averageRating * log(numVotes))
 
-top_movies <- metric |>
+top_movies <- TITLE_RATINGS |>
   arrange(desc(success_metric))  |>
   slice(1:10)  # Select the top 10 movies based on the success metric
 
@@ -375,21 +383,15 @@ top_movies_with_titles <- top_movies |>
   select(primaryTitle, averageRating, numVotes, success_metric)  # Display relevant info
 
 # Print the top movies with titles and success metric
-print(top_movies_with_titles)
+print(top_movies_with_titles %>% select(primaryTitle, success_metric))
 ```
 
 #### Choose 3-5 movies with large numbers of IMDb votes that score poorly on your success metric and confirm that they are indeed of low quality.
 
 ```{r}
-# Load necessary libraries
-library(dplyr)
-
-# Create the success metric as before
-metric <- TITLE_RATINGS |>
-  mutate(success_metric = averageRating * log(numVotes + 1))  # Add 1 to avoid log(0)
 
 # Filter for movies with large numbers of votes and low success metric. Assuming 'large' is more than 100,000 votes
-low_success_movies <- metric |>
+low_success_movies <- TITLE_RATINGS |>
   filter(numVotes > 100000)  |>
   arrange(success_metric)  |>
   slice(1:5)  # Select the bottom 5 movies with poor success metric
@@ -405,80 +407,336 @@ print(low_success_movies_with_titles)
 
 #### Choose a prestige actor or director and confirm that they have many projects with high scores on your success metric.
 
-THe last movie I went to see in theaters was CHristopher Nolan's *Oppenheimer*. I will pick him as a prestige director for this example. 
+The last movie I went to see in theaters was Christopher Nolan's *Oppenheimer*. I will pick him as a prestige director for this example.
 
 ```{r, message = FALSE, warning = FALSE}
 
-# Load necessary libraries
-library(dplyr)
-
 # Find the nconst for Christopher Nolan
-nolan <- NAME_BASICS %>%
-  filter(primaryName == "Christopher Nolan") %>%
+nolan <- NAME_BASICS |>
+  filter(primaryName == "Christopher Nolan") |>
   select(nconst)
 
 # Find all projects where Christopher Nolan is the director
-nolan_projects <- TITLE_PRINCIPALS %>%
-  filter(nconst == nolan$nconst, category == "director") %>%
+nolan_projects <- TITLE_PRINCIPALS|>
+  filter(nconst == nolan$nconst, category == "director") |>
   select(tconst)
 ```
 
-I found Christopher Nolan within the Name table and Principals title. Now I will join them the success metric in the ratings table then join with title_basic to get project titles. 
+I found Christopher Nolan within the Name table and Principals title. Now I will join them the success metric in the ratings table then join with title_basic to get project titles.
 
 ```{r}
 # Join Nolan's projects with the ratings data to calculate success metrics
-nolan_projects_ratings <- nolan_projects %>%
-  inner_join(imdb_ratings, by = "tconst") %>%
+nolan_projects_ratings <- nolan_projects|>
+  inner_join(TITLE_RATINGS, by = "tconst") |>
   mutate(success_metric = averageRating * log(numVotes + 1))  # Success metric
 
-# Step 4: Join with the basics dataset to get project titles
-nolan_projects_with_titles <- nolan_projects_ratings %>%
-  inner_join(TITLE_BASICS, by = "tconst") %>%
-  select(primaryTitle, averageRating, numVotes, success_metric) %>%
-  arrange(desc(success_metric))  # Sort by highest success metric
+# Join with the basics dataset to get project titles
+nolan_projects_with_titles <- nolan_projects_ratings |>
+  inner_join(TITLE_BASICS, by = "tconst")|>
+  select(primaryTitle, averageRating, numVotes, success_metric) |>
+  arrange(desc(success_metric))  # Sort by highest 
 
-# Step 5: Print top projects by success metric for Christopher Nolan
 print(nolan_projects_with_titles)
 ```
 
 #### Perform at least one other form of ‘spot check’ validation.
 
-One more "spot check" can be to see if Oscar-winning movies have a high success score.
-I looked up some movies to manually input into the code to check. 
+One more "spot check" can be to see if Oscar-winning movies have a high success score. I looked up some movies to manually input into the code to check.
 
 ```{r}
-# Load necessary libraries
-library(dplyr)
-library(readr)
-
-# Read IMDb datasets
-imdb_basics <- read_tsv("path_to_your_file/title.basics.tsv.gz", na = "\\N")
-imdb_ratings <- read_tsv("path_to_your_file/title.ratings.tsv.gz", na = "\\N")
-
-# Step 1: List of famous Oscar-winning movies (Best Picture winners)
+# List of famous Oscar-winning movies (Best Picture winners)
 oscar_winners <- c("The Godfather", "Schindler's List", "The Silence of the Lambs", 
                    "Forrest Gump", "Gladiator", "No Country for Old Men", "Parasite")
 
-# Step 2: Filter the IMDb basics dataset to find tconsts of these movies
-oscar_winner_movies <- imdb_basics %>%
-  filter(primaryTitle %in% oscar_winners) %>%
+# Filter the IMDb basics dataset to find tconsts of these movies
+oscar_winner_movies <- TITLE_BASICS |>
+  filter(primaryTitle %in% oscar_winners) |>
   select(tconst, primaryTitle)
 
-# Step 3: Join with the ratings data to get the success metric for these movies
-oscar_winner_ratings <- oscar_winner_movies %>%
-  inner_join(imdb_ratings, by = "tconst") %>%
-  mutate(success_metric = averageRating * log(numVotes + 1))  # Success metric
+# Join with the ratings data to get the success metric for these movies
+oscar_winner_ratings <- oscar_winner_movies |>
+  inner_join(TITLE_RATINGS, by = "tconst")  |>
+  mutate(success_metric = averageRating * log(numVotes + 1))
 
-# Step 4: Display the results to validate if these Oscar-winning movies score highly
-oscar_winner_ratings %>%
-  select(primaryTitle, averageRating, numVotes, success_metric) %>%
-  arrange(desc(success_metric)) %>%
+# Display the results to validate if these Oscar-winning movies score highly
+oscar_winner_ratings |>
+  select(primaryTitle, averageRating, numVotes, success_metric)  |>
+  arrange(desc(success_metric))  |>
   print()
 ```
 
+A numerical threshold of what "success" means for a project can be picked by looking at the quantile distribution of ratings across all movies.
 
+```{r}
 
+# Step 1: Inspect the distribution of the success metric
+summary(TITLE_RATINGS$success_metric)
 
+# Step 2: Determine the 75th percentile (or another quantile) as the threshold for a 'solid' movie
+threshold <- quantile(TITLE_RATINGS$success_metric, 0.75)
 
+# Print the threshold value
+print(paste("Threshold for a 'solid' movie: ", threshold))
+```
 
+## Task 4
 
+Now, it is time to pick a genre for my movie. For research, I am looking at a couple questions. My first question is **What was the genre with the most “successes” in each decade?**
+
+```{r}
+library(tidyr)
+
+successful_movies <- TITLE_RATINGS %>%
+  filter(success_metric > threshold)
+
+# Join with imdb_basics to get genre and year information
+successful_movies_with_genres <- successful_movies %>%
+  inner_join(TITLE_BASICS, by = "tconst") %>%
+  filter(!is.na(startYear))  # Ensure the movie has a valid start year
+
+# Create a new column for the decade
+successful_movies_with_genres <- successful_movies_with_genres %>%
+  mutate(decade = floor(as.numeric(startYear) / 10) * 10)  # Convert year to decade
+
+# Separate genres (if multiple genres are in a single string)
+successful_movies_with_genres <- successful_movies_with_genres %>%
+  separate_rows(genres, sep = ",")  # Separate genres into individual rows if comma-separated
+
+# Group by decade and genre, then count the number of successes per genre in each decade
+genre_counts_by_decade <- successful_movies_with_genres %>%
+  group_by(decade, genres) %>%
+  summarise(success_count = n()) %>%
+  arrange(decade, desc(success_count))
+
+# Find the genre with the most successes in each decade
+most_successful_genres_per_decade <- genre_counts_by_decade %>%
+  group_by(decade) %>%
+  slice_max(success_count, n = 1)  # Get the genre with the highest count per decade
+
+# Print the most successful genre for each decade
+print(most_successful_genres_per_decade)
+```
+
+```{r}
+
+# Plotting the most successful genres per decade
+ggplot(most_successful_genres_per_decade, aes(x = factor(decade), y = success_count, fill = genres)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Most Successful Genres Per Decade",
+       x = "Decade",
+       y = "Number of Successful Movies",
+       fill = "Genre") +
+  theme_minimal()
+```
+
+My next set of questions are **What genre has produced the most “successes” since 2010? Does it have the highest success rate or does it only have a large number of successes because there are many productions in that genre?**
+
+```{r}
+# Filter for movies produced since 2010 and for successes
+successful_movies_since_2010 <- TITLE_RATINGS %>%
+  inner_join(TITLE_BASICS, by = "tconst") %>%
+  filter(as.numeric(startYear) >= 2010) %>%  # Movies from 2010 onwards
+  filter(success_metric > threshold)  # Only successful movies
+
+# Step 3: Separate genres (in case of multiple genres in a single string)
+successful_movies_since_2010 <- successful_movies_since_2010 %>%
+  separate_rows(genres, sep = ",")
+
+# Step 4: Count the number of successes per genre
+genre_success_count <- successful_movies_since_2010 %>%
+  group_by(genres) %>%
+  summarise(success_count = n()) %>%
+  arrange(desc(success_count))
+
+# Step 5: Calculate the total number of productions per genre since 2010
+total_movies_per_genre <- TITLE_BASICS %>%
+  filter(as.numeric(startYear) >= 2010) %>%
+  separate_rows(genres, sep = ",") %>%
+  group_by(genres) %>%
+  summarise(total_count = n())
+
+# Step 6: Join the success count with the total production count and calculate success rate
+genre_success_rate <- genre_success_count %>%
+  inner_join(total_movies_per_genre, by = "genres") %>%
+  mutate(success_rate = success_count / total_count) %>%
+  arrange(desc(success_rate))
+
+# Step 7: Print the genre with the most successes and the success rate
+print(genre_success_rate)
+ggplot(genre_success_rate, aes(x = success_count, y = success_rate, label = genres)) +
+  geom_point(color = "blue", size = 3) +
+  geom_text(vjust = -1, size = 3) +  # Add genre labels to the points
+  labs(title = "Success Rate vs Number of Successes (2010 onwards)",
+       x = "Number of Successes",
+       y = "Success Rate") +
+  theme_minimal()
+```
+
+Through this, I see that drama is still the number one genre to choose, but action, crime, adventure, and comedy are also good genres to pick with high success rate and high success count.
+
+With this, I will choose the genre drama! IMDb's \[definition\]\[https://help.imdb.com/article/contribution/titles/genres/GZDRMS6R742JRGAG#\] of drama is "numerous consecutive scenes of characters portrayed to effect a serious narrative throughout the title, usually involving conflicts and emotions. This can be exaggerated upon to produce melodrama." Some examples of subgenres under this category are coming-of-age, historical epic, medical drama, and psychological drama. Quite a bit of subgenres are set under this genre!
+
+Particularly, I am interested in the subgenre Epic, described as "grand and sweeping stories often set against significant historical, cultural, or societal backdrops. Epic dramas are characterized by their scope, scale, and often lengthy runtime, as they aim to capture the grandeur of human experiences, events, and emotions."
+
+## Successful Personnel in the Genre
+
+## Task 5 Key Personnel
+
+Based on my interest in pursuing a drama movie, set in the subgenre epic, I would like to create a team with Christopher Nolan as the director. He has experience in creating drama movies that are "successful".
+
+```{r}
+
+# Join Christopher Nolan's projects with the title.basics dataset to get genres
+nolan_projects_with_genres <- nolan_projects %>%
+  inner_join(TITLE_BASICS, by = "tconst") %>%
+  separate_rows(genres, sep = ",") %>%
+  filter(genres == "Drama")  # Filter for drama movies
+
+# Join with the ratings dataset to calculate success metrics for drama movies
+nolan_drama_success <- nolan_projects_with_genres %>%
+  inner_join(TITLE_RATINGS, by = "tconst") %>%
+  mutate(success_metric = averageRating * log(numVotes + 1))  # Calculate success metric
+
+# Print Christopher Nolan's drama movies based on success metric
+cat("Christopher Nolan's Successful Drama Movies:\n")
+print(nolan_drama_success %>%
+  select(primaryTitle, startYear, averageRating, numVotes, success_metric) %>%
+  arrange(desc(success_metric)))
+```
+
+An established actor I would like to add to the team is Leonardo DiCaprio. Not only is he but he has worked on projects with Christopher Nolan in the past.
+
+```{r}
+
+library(gt)
+
+# Find Leonardo DiCaprio's nconst (unique identifier for individuals)
+leonardo <- NAME_BASICS %>%
+  filter(primaryName == "Leonardo DiCaprio") %>%
+  select(nconst)
+
+# Get all projects where Leonardo DiCaprio is an actor
+leonardo_projects <- TITLE_PRINCIPALS %>%
+  filter(nconst == leonardo$nconst, category == "actor") %>%
+  select(tconst)
+
+# Join Leonardo DiCaprio's projects with the ratings data to calculate success metrics
+leonardo_ratings <- leonardo_projects %>%
+  inner_join(TITLE_RATINGS, by = "tconst") %>%
+  mutate(success_metric = averageRating * log(numVotes + 1))  # Success metric calculation
+
+# Join with title.basics to get the titles and release years for validation
+leonardo_success <- leonardo_ratings %>%
+  inner_join(TITLE_BASICS, by = "tconst") %>%
+  select(primaryTitle, startYear, averageRating, numVotes, success_metric) %>%
+  arrange(desc(success_metric))
+
+leonardo_success %>%
+  gt() %>%
+  tab_header(
+    title = "Leonardo DiCaprio's Top Movies by Success Metric"
+  )
+```
+
+This table proves that Leonardo DiCaprio is a great actor! An up and coming actor that I would like to bring is Timothée Chalamet. His most recent work is Dune, an American epic science fiction film based off the book series, Dune.
+
+```{r}
+# Step 2: Find Timothée Chalamet's nconst (unique identifier for individuals)
+timothee <- NAME_BASICS %>%
+  filter(primaryName == "Timothée Chalamet") %>%
+  select(nconst)
+
+# Step 3: Get all projects where Timothée Chalamet is an actor
+timothee_projects <- TITLE_PRINCIPALS %>%
+  filter(nconst == timothee$nconst, category == "actor") %>%
+  select(tconst)
+
+# Step 4: Join Timothée Chalamet's projects with the ratings data to calculate success metrics
+timothee_ratings <- timothee_projects %>%
+  inner_join(TITLE_RATINGS, by = "tconst") %>%
+  mutate(success_metric = averageRating * log(numVotes + 1))  # Success metric calculation
+
+# Step 5: Join with title.basics to get the titles and release years for validation
+timothee_success <- timothee_ratings %>%
+  inner_join(TITLE_BASICS, by = "tconst") %>%
+  select(primaryTitle, startYear, averageRating, numVotes, success_metric) %>%
+  arrange(desc(success_metric))
+
+timothee_success %>%
+  gt() %>%
+  tab_header(
+    title = "Timothée Chalamet's Top Movies by Success Metric"
+  )
+```
+
+Surprisingly, I did not know that Timothée Chamalet was also in a Christopher Nolan project. With 11 movies above the success threshold, I think Timothée will be a great addition to the team.
+
+## Nostalgia and Remakes
+
+## Task 6 Finding a Classic Movie to Remake
+
+Of course, now it is time to create a killer plot. One way is to look at and remake a classic film. The criteria for a classic film is as follows: \* large number of IMDb ratings \>100,000 \* high average rating \>8 \* have not been remade in the past 25 years
+
+```{r}
+# Filter for movies released before 1999 (at least 25 years old)
+classic_movies <- TITLE_BASICS %>%
+  filter(titleType == "movie" & as.numeric(startYear) < 1999)
+
+# Join with ratings data to find movies with high ratings and large number of votes
+classic_movies_with_ratings <- classic_movies %>%
+  inner_join(TITLE_RATINGS, by = "tconst") %>%
+  filter(numVotes > 100000 & averageRating > 8.5)  # Filter for high votes and high ratings
+
+#  Sort by highest average rating and number of votes to find top movies
+top_classic_movies <- classic_movies_with_ratings %>%
+  arrange(desc(averageRating), desc(numVotes))
+
+# Step 5: Exclude movies that have been remade in the past 25 years
+remade_movies <- TITLE_BASICS %>%
+  filter(titleType == "remake" & as.numeric(startYear) >= 1999)
+
+# Filter out remade movies from top classic movies
+classic_movies_to_remake <- top_classic_movies %>%
+  filter(!tconst %in% remade_movies$tconst)
+
+classic_movies_to_remake |>
+  select(primaryTitle, startYear, averageRating, numVotes) |>
+  gt() |>
+  tab_header(title = "Top Classic Movies to Remake")
+```
+
+From the list, I would like to remake *Schindler's List*, a movie based during World War II. Since the movie was made in 1993, I believe most of the cast is still around.
+
+```{r}
+# Find the tconst for Schindler's List
+schindlers_list <- TITLE_BASICS %>%
+  filter(primaryTitle == "Schindler's List" & titleType == "movie") %>%
+  select(tconst)
+
+# Get key talent (actors, directors, writers) from Schindler's List
+key_talent <- TITLE_PRINCIPALS %>%
+  filter(tconst == schindlers_list$tconst & category %in% c("actor", "director", "writer")) %>%
+  select(nconst, category)
+
+# Step 4: Join with the name.basics dataset to check if they are still alive
+key_talent_info <- key_talent %>%
+  inner_join(NAME_BASICS, by = "nconst") %>%
+  select(primaryName, category, birthYear, deathYear)  # Select relevant info
+
+# Step 5: Filter for those who are still alive (deathYear is NA)
+still_alive <- key_talent_info %>%
+  filter(is.na(deathYear))
+
+still_alive |>
+  gt() |>
+  tab_header(title = "Key talent from Schindler's List - Still Alive")
+```
+
+## The Pitch
+
+> From director Christopher Nolan, the visionary mind between *Oppenheimer*,\
+> From actor Leonardo DiCaprio, a Hollywood icon,\
+> From actor Timothee Chalamet, the star of *Dune* movie series,\
+> Comes a rich historical drama\
+> A story of war, love, will power, and humanity\
+> Coming soon to a theater near you.

@@ -301,7 +301,7 @@ Attaching package: 'dplyr'</code></pre>
 {
     UseMethod("ggplot")
 }
-&lt;bytecode: 0x000002e20744cc30&gt;
+&lt;bytecode: 0x000001a03df9dbc0&gt;
 &lt;environment: namespace:ggplot2&gt;</code></pre>
 </div>
 </div>
@@ -667,118 +667,96 @@ Caused by warning:
 <section id="quantifying-success" class="level2">
 <h2 class="anchored" data-anchor-id="quantifying-success">Quantifying Success</h2>
 <p>A “success” measure that reflects both quality and popular awareness will include average ratings and number of votes. A common approach is to compute a weighted score of both of these factors so it looks like <code>success = averageRating x log(numVotes)</code></p>
+</section>
+<section id="task-3" class="level2">
+<h2 class="anchored" data-anchor-id="task-3">Task 3</h2>
 <section id="choose-the-top-5-10-movies-on-your-metric-and-confirm-that-they-were-indeed-box-office-successes." class="level4">
 <h4 class="anchored" data-anchor-id="choose-the-top-5-10-movies-on-your-metric-and-confirm-that-they-were-indeed-box-office-successes.">Choose the top 5-10 movies on your metric and confirm that they were indeed box office successes.</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a success metric</span></span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>metric <span class="ot">&lt;-</span> TITLE_RATINGS <span class="sc">|&gt;</span></span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes))</span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>top_movies <span class="ot">&lt;-</span> metric <span class="sc">|&gt;</span></span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric))  <span class="sc">|&gt;</span></span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)  <span class="co"># Select the top 10 movies based on the success metric</span></span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with the basics dataset to get movie titles for validation</span></span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>top_movies_with_titles <span class="ot">&lt;-</span> top_movies <span class="sc">|&gt;</span></span>
-<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>)  <span class="sc">|&gt;</span></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric)  <span class="co"># Display relevant info</span></span>
-<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the top movies with titles and success metric</span></span>
-<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_movies_with_titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a success metric</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>TITLE_RATINGS <span class="ot">&lt;-</span> TITLE_RATINGS <span class="sc">|&gt;</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes))</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>top_movies <span class="ot">&lt;-</span> TITLE_RATINGS <span class="sc">|&gt;</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric))  <span class="sc">|&gt;</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)  <span class="co"># Select the top 10 movies based on the success metric</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with the basics dataset to get movie titles for validation</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>top_movies_with_titles <span class="ot">&lt;-</span> top_movies <span class="sc">|&gt;</span></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>)  <span class="sc">|&gt;</span></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric)  <span class="co"># Display relevant info</span></span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the top movies with titles and success metric</span></span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_movies_with_titles <span class="sc">%&gt;%</span> <span class="fu">select</span>(primaryTitle, success_metric))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                                        primaryTitle averageRating numVotes
-1                                       Breaking Bad           9.5  2208030
-2                           The Shawshank Redemption           9.3  2942823
-3                                    Game of Thrones           9.2  2346428
-4                                    The Dark Knight           9.0  2922922
-5                                      The Godfather           9.2  2051186
-6      The Lord of the Rings: The Return of the King           9.0  2013824
-7                                       Pulp Fiction           8.9  2260017
-8                                          Inception           8.8  2595555
-9  The Lord of the Rings: The Fellowship of the Ring           8.9  2043202
-10                                        Fight Club           8.8  2374722
-   success_metric
-1        138.7723
-2        138.5224
-3        134.9493
-4        133.9928
-5        133.7121
-6        130.6399
-7        130.2149
-8        129.9699
-9        129.3173
-10       129.1874</code></pre>
+<pre><code>                                        primaryTitle success_metric
+1                                       Breaking Bad       138.7723
+2                           The Shawshank Redemption       138.5224
+3                                    Game of Thrones       134.9493
+4                                    The Dark Knight       133.9928
+5                                      The Godfather       133.7121
+6      The Lord of the Rings: The Return of the King       130.6399
+7                                       Pulp Fiction       130.2149
+8                                          Inception       129.9699
+9  The Lord of the Rings: The Fellowship of the Ring       129.3173
+10                                        Fight Club       129.1874</code></pre>
 </div>
 </div>
 </section>
 <section id="choose-3-5-movies-with-large-numbers-of-imdb-votes-that-score-poorly-on-your-success-metric-and-confirm-that-they-are-indeed-of-low-quality." class="level4">
 <h4 class="anchored" data-anchor-id="choose-3-5-movies-with-large-numbers-of-imdb-votes-that-score-poorly-on-your-success-metric-and-confirm-that-they-are-indeed-of-low-quality.">Choose 3-5 movies with large numbers of IMDb votes that score poorly on your success metric and confirm that they are indeed of low quality.</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the success metric as before</span></span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>metric <span class="ot">&lt;-</span> TITLE_RATINGS <span class="sc">|&gt;</span></span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes <span class="sc">+</span> <span class="dv">1</span>))  <span class="co"># Add 1 to avoid log(0)</span></span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for movies with large numbers of votes and low success metric. Assuming 'large' is more than 100,000 votes</span></span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>low_success_movies <span class="ot">&lt;-</span> metric <span class="sc">|&gt;</span></span>
-<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(numVotes <span class="sc">&gt;</span> <span class="dv">100000</span>)  <span class="sc">|&gt;</span></span>
-<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(success_metric)  <span class="sc">|&gt;</span></span>
-<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)  <span class="co"># Select the bottom 5 movies with poor success metric</span></span>
-<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with title.basics to get the titles for validation</span></span>
-<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>low_success_movies_with_titles <span class="ot">&lt;-</span> low_success_movies <span class="sc">%&gt;%</span></span>
-<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric)  <span class="co"># Display relevant info</span></span>
-<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the bottom 5 movies with titles and metrics</span></span>
-<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(low_success_movies_with_titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for movies with large numbers of votes and low success metric. Assuming 'large' is more than 100,000 votes</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>low_success_movies <span class="ot">&lt;-</span> TITLE_RATINGS <span class="sc">|&gt;</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(numVotes <span class="sc">&gt;</span> <span class="dv">100000</span>)  <span class="sc">|&gt;</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(success_metric)  <span class="sc">|&gt;</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)  <span class="co"># Select the bottom 5 movies with poor success metric</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with title.basics to get the titles for validation</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>low_success_movies_with_titles <span class="ot">&lt;-</span> low_success_movies <span class="sc">%&gt;%</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric)  <span class="co"># Display relevant info</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the bottom 5 movies with titles and metrics</span></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(low_success_movies_with_titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       primaryTitle averageRating numVotes success_metric
-1             Radhe           1.9   180205       22.99353
-2        Epic Movie           2.4   110222       27.86463
-3         Adipurush           2.7   133981       31.87474
-4 Meet the Spartans           2.8   112199       32.55851
-5          365 Days           3.3   100579       38.01174</code></pre>
+1             Radhe           1.9   180205       22.99352
+2        Epic Movie           2.4   110222       27.86460
+3         Adipurush           2.7   133981       31.87472
+4 Meet the Spartans           2.8   112199       32.55848
+5          365 Days           3.3   100579       38.01171</code></pre>
 </div>
 </div>
 </section>
 <section id="choose-a-prestige-actor-or-director-and-confirm-that-they-have-many-projects-with-high-scores-on-your-success-metric." class="level4">
 <h4 class="anchored" data-anchor-id="choose-a-prestige-actor-or-director-and-confirm-that-they-have-many-projects-with-high-scores-on-your-success-metric.">Choose a prestige actor or director and confirm that they have many projects with high scores on your success metric.</h4>
-<p>THe last movie I went to see in theaters was CHristopher Nolan’s <em>Oppenheimer</em>. I will pick him as a prestige director for this example.</p>
+<p>The last movie I went to see in theaters was Christopher Nolan’s <em>Oppenheimer</em>. I will pick him as a prestige director for this example.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the nconst for Christopher Nolan</span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>nolan <span class="ot">&lt;-</span> NAME_BASICS <span class="sc">%&gt;%</span></span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primaryName <span class="sc">==</span> <span class="st">"Christopher Nolan"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(nconst)</span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all projects where Christopher Nolan is the director</span></span>
-<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>nolan_projects <span class="ot">&lt;-</span> TITLE_PRINCIPALS <span class="sc">%&gt;%</span></span>
-<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nconst <span class="sc">==</span> nolan<span class="sc">$</span>nconst, category <span class="sc">==</span> <span class="st">"director"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tconst)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the nconst for Christopher Nolan</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>nolan <span class="ot">&lt;-</span> NAME_BASICS <span class="sc">|&gt;</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primaryName <span class="sc">==</span> <span class="st">"Christopher Nolan"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(nconst)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all projects where Christopher Nolan is the director</span></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>nolan_projects <span class="ot">&lt;-</span> TITLE_PRINCIPALS<span class="sc">|&gt;</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nconst <span class="sc">==</span> nolan<span class="sc">$</span>nconst, category <span class="sc">==</span> <span class="st">"director"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tconst)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I found Christopher Nolan within the Name table and Principals title. Now I will join them the success metric in the ratings table then join with title_basic to get project titles.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join Nolan's projects with the ratings data to calculate success metrics</span></span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>nolan_projects_ratings <span class="ot">&lt;-</span> nolan_projects <span class="sc">%&gt;%</span></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>nolan_projects_ratings <span class="ot">&lt;-</span> nolan_projects<span class="sc">|&gt;</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes <span class="sc">+</span> <span class="dv">1</span>))  <span class="co"># Success metric</span></span>
 <span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Join with the basics dataset to get project titles</span></span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>nolan_projects_with_titles <span class="ot">&lt;-</span> nolan_projects_ratings <span class="sc">%&gt;%</span></span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric) <span class="sc">%&gt;%</span></span>
-<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric))  <span class="co"># Sort by highest success metric</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with the basics dataset to get project titles</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>nolan_projects_with_titles <span class="ot">&lt;-</span> nolan_projects_ratings <span class="sc">|&gt;</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>)<span class="sc">|&gt;</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric) <span class="sc">|&gt;</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric))  <span class="co"># Sort by highest </span></span>
 <span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Print top projects by success metric for Christopher Nolan</span></span>
-<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nolan_projects_with_titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nolan_projects_with_titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      primaryTitle averageRating numVotes success_metric
 1  The Dark Knight           9.0  2922922      133.99285
@@ -798,28 +776,25 @@ Caused by warning:
 <h4 class="anchored" data-anchor-id="perform-at-least-one-other-form-of-spot-check-validation.">Perform at least one other form of ‘spot check’ validation.</h4>
 <p>One more “spot check” can be to see if Oscar-winning movies have a high success score. I looked up some movies to manually input into the code to check.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List of famous Oscar-winning movies (Best Picture winners)</span></span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>oscar_winners <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"The Godfather"</span>, <span class="st">"Schindler's List"</span>, <span class="st">"The Silence of the Lambs"</span>, </span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Forrest Gump"</span>, <span class="st">"Gladiator"</span>, <span class="st">"No Country for Old Men"</span>, <span class="st">"Parasite"</span>)</span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the IMDb basics dataset to find tconsts of these movies</span></span>
-<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>oscar_winner_movies <span class="ot">&lt;-</span> TITLE_BASICS <span class="sc">%&gt;%</span></span>
-<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primaryTitle <span class="sc">%in%</span> oscar_winners) <span class="sc">%&gt;%</span></span>
-<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tconst, primaryTitle)</span>
-<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Join with the ratings data to get the success metric for these movies</span></span>
-<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>oscar_winner_ratings <span class="ot">&lt;-</span> oscar_winner_movies <span class="sc">%&gt;%</span></span>
-<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes <span class="sc">+</span> <span class="dv">1</span>))  <span class="co"># Success metric</span></span>
-<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Display the results to validate if these Oscar-winning movies score highly</span></span>
-<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a>oscar_winner_ratings <span class="sc">%&gt;%</span></span>
-<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric) <span class="sc">%&gt;%</span></span>
-<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric)) <span class="sc">%&gt;%</span></span>
-<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List of famous Oscar-winning movies (Best Picture winners)</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>oscar_winners <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"The Godfather"</span>, <span class="st">"Schindler's List"</span>, <span class="st">"The Silence of the Lambs"</span>, </span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Forrest Gump"</span>, <span class="st">"Gladiator"</span>, <span class="st">"No Country for Old Men"</span>, <span class="st">"Parasite"</span>)</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the IMDb basics dataset to find tconsts of these movies</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>oscar_winner_movies <span class="ot">&lt;-</span> TITLE_BASICS <span class="sc">|&gt;</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primaryTitle <span class="sc">%in%</span> oscar_winners) <span class="sc">|&gt;</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tconst, primaryTitle)</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with the ratings data to get the success metric for these movies</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>oscar_winner_ratings <span class="ot">&lt;-</span> oscar_winner_movies <span class="sc">|&gt;</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>)  <span class="sc">|&gt;</span></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the results to validate if these Oscar-winning movies score highly</span></span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>oscar_winner_ratings <span class="sc">|&gt;</span></span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, averageRating, numVotes, success_metric)  <span class="sc">|&gt;</span></span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric))  <span class="sc">|&gt;</span></span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>               primaryTitle averageRating numVotes success_metric
 1             The Godfather           9.2  2051186      133.71215
@@ -851,9 +826,3084 @@ Caused by warning:
 27                 Parasite           2.8      698       18.33902</code></pre>
 </div>
 </div>
-
-
+<p>A numerical threshold of what “success” means for a project can be picked by looking at the quantile distribution of ratings across all movies.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Inspect the distribution of the success metric</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(TITLE_RATINGS<span class="sc">$</span>success_metric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  4.615  33.779  40.232  42.229  49.022 138.772 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Determine the 75th percentile (or another quantile) as the threshold for a 'solid' movie</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>threshold <span class="ot">&lt;-</span> <span class="fu">quantile</span>(TITLE_RATINGS<span class="sc">$</span>success_metric, <span class="fl">0.75</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the threshold value</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Threshold for a 'solid' movie: "</span>, threshold))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Threshold for a 'solid' movie:  49.0217313885254"</code></pre>
+</div>
+</div>
 </section>
+</section>
+<section id="task-4" class="level2">
+<h2 class="anchored" data-anchor-id="task-4">Task 4</h2>
+<p>Now, it is time to pick a genre for my movie. For research, I am looking at a couple questions. My first question is <strong>What was the genre with the most “successes” in each decade?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>successful_movies <span class="ot">&lt;-</span> TITLE_RATINGS <span class="sc">%&gt;%</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(success_metric <span class="sc">&gt;</span> threshold)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with imdb_basics to get genre and year information</span></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>successful_movies_with_genres <span class="ot">&lt;-</span> successful_movies <span class="sc">%&gt;%</span></span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(startYear))  <span class="co"># Ensure the movie has a valid start year</span></span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new column for the decade</span></span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>successful_movies_with_genres <span class="ot">&lt;-</span> successful_movies_with_genres <span class="sc">%&gt;%</span></span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">decade =</span> <span class="fu">floor</span>(<span class="fu">as.numeric</span>(startYear) <span class="sc">/</span> <span class="dv">10</span>) <span class="sc">*</span> <span class="dv">10</span>)  <span class="co"># Convert year to decade</span></span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate genres (if multiple genres are in a single string)</span></span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>successful_movies_with_genres <span class="ot">&lt;-</span> successful_movies_with_genres <span class="sc">%&gt;%</span></span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(genres, <span class="at">sep =</span> <span class="st">","</span>)  <span class="co"># Separate genres into individual rows if comma-separated</span></span>
+<span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-19"><a href="#cb66-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by decade and genre, then count the number of successes per genre in each decade</span></span>
+<span id="cb66-20"><a href="#cb66-20" aria-hidden="true" tabindex="-1"></a>genre_counts_by_decade <span class="ot">&lt;-</span> successful_movies_with_genres <span class="sc">%&gt;%</span></span>
+<span id="cb66-21"><a href="#cb66-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(decade, genres) <span class="sc">%&gt;%</span></span>
+<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">success_count =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb66-23"><a href="#cb66-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(decade, <span class="fu">desc</span>(success_count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'decade'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the genre with the most successes in each decade</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>most_successful_genres_per_decade <span class="ot">&lt;-</span> genre_counts_by_decade <span class="sc">%&gt;%</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(decade) <span class="sc">%&gt;%</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(success_count, <span class="at">n =</span> <span class="dv">1</span>)  <span class="co"># Get the genre with the highest count per decade</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the most successful genre for each decade</span></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(most_successful_genres_per_decade)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 18 × 3
+# Groups:   decade [16]
+   decade genres      success_count
+    &lt;dbl&gt; &lt;chr&gt;               &lt;int&gt;
+ 1   1870 Documentary             2
+ 2   1870 Short                   2
+ 3   1880 Documentary             2
+ 4   1880 Short                   2
+ 5   1890 Short                  12
+ 6   1900 Short                  13
+ 7   1910 Comedy                 33
+ 8   1920 Drama                 124
+ 9   1930 Drama                 328
+10   1940 Drama                 498
+11   1950 Drama                 857
+12   1960 Drama                1235
+13   1970 Drama                1514
+14   1980 Drama                1878
+15   1990 Drama                3877
+16   2000 Drama               10438
+17   2010 Drama               22390
+18   2020 Drama               10070</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the most successful genres per decade</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(most_successful_genres_per_decade, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(decade), <span class="at">y =</span> success_count, <span class="at">fill =</span> genres)) <span class="sc">+</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Most Successful Genres Per Decade"</span>,</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Decade"</span>,</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Successful Movies"</span>,</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Genre"</span>) <span class="sc">+</span></span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="mp02_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>My next set of questions are <strong>What genre has produced the most “successes” since 2010? Does it have the highest success rate or does it only have a large number of successes because there are many productions in that genre?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for movies produced since 2010 and for successes</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>successful_movies_since_2010 <span class="ot">&lt;-</span> TITLE_RATINGS <span class="sc">%&gt;%</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">as.numeric</span>(startYear) <span class="sc">&gt;=</span> <span class="dv">2010</span>) <span class="sc">%&gt;%</span>  <span class="co"># Movies from 2010 onwards</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(success_metric <span class="sc">&gt;</span> threshold)  <span class="co"># Only successful movies</span></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Separate genres (in case of multiple genres in a single string)</span></span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>successful_movies_since_2010 <span class="ot">&lt;-</span> successful_movies_since_2010 <span class="sc">%&gt;%</span></span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(genres, <span class="at">sep =</span> <span class="st">","</span>)</span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Count the number of successes per genre</span></span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>genre_success_count <span class="ot">&lt;-</span> successful_movies_since_2010 <span class="sc">%&gt;%</span></span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(genres) <span class="sc">%&gt;%</span></span>
+<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">success_count =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_count))</span>
+<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-17"><a href="#cb71-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Calculate the total number of productions per genre since 2010</span></span>
+<span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a>total_movies_per_genre <span class="ot">&lt;-</span> TITLE_BASICS <span class="sc">%&gt;%</span></span>
+<span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">as.numeric</span>(startYear) <span class="sc">&gt;=</span> <span class="dv">2010</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(genres, <span class="at">sep =</span> <span class="st">","</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(genres) <span class="sc">%&gt;%</span></span>
+<span id="cb71-22"><a href="#cb71-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count =</span> <span class="fu">n</span>())</span>
+<span id="cb71-23"><a href="#cb71-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-24"><a href="#cb71-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 6: Join the success count with the total production count and calculate success rate</span></span>
+<span id="cb71-25"><a href="#cb71-25" aria-hidden="true" tabindex="-1"></a>genre_success_rate <span class="ot">&lt;-</span> genre_success_count <span class="sc">%&gt;%</span></span>
+<span id="cb71-26"><a href="#cb71-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(total_movies_per_genre, <span class="at">by =</span> <span class="st">"genres"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb71-27"><a href="#cb71-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_rate =</span> success_count <span class="sc">/</span> total_count) <span class="sc">%&gt;%</span></span>
+<span id="cb71-28"><a href="#cb71-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_rate))</span>
+<span id="cb71-29"><a href="#cb71-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-30"><a href="#cb71-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 7: Print the genre with the most successes and the success rate</span></span>
+<span id="cb71-31"><a href="#cb71-31" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(genre_success_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 28 × 4
+   genres    success_count total_count success_rate
+   &lt;chr&gt;             &lt;int&gt;       &lt;int&gt;        &lt;dbl&gt;
+ 1 Adventure         11195       27772        0.403
+ 2 Action            15390       38840        0.396
+ 3 Biography          2330        6038        0.386
+ 4 Crime             12375       33485        0.370
+ 5 Fantasy            3892       10828        0.359
+ 6 Animation          8774       25155        0.349
+ 7 Mystery            6559       19118        0.343
+ 8 Western             223         650        0.343
+ 9 Drama             32460       95970        0.338
+10 Sci-Fi             2359        7350        0.321
+# ℹ 18 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(genre_success_rate, <span class="fu">aes</span>(<span class="at">x =</span> success_count, <span class="at">y =</span> success_rate, <span class="at">label =</span> genres)) <span class="sc">+</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span>  <span class="co"># Add genre labels to the points</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Success Rate vs Number of Successes (2010 onwards)"</span>,</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Number of Successes"</span>,</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Success Rate"</span>) <span class="sc">+</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="mp02_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Through this, I see that drama is still the number one genre to choose, but action, crime, adventure, and comedy are also good genres to pick with high success rate and high success count.</p>
+<p>With this, I will choose the genre drama! IMDb’s [definition][https://help.imdb.com/article/contribution/titles/genres/GZDRMS6R742JRGAG#] of drama is “numerous consecutive scenes of characters portrayed to effect a serious narrative throughout the title, usually involving conflicts and emotions. This can be exaggerated upon to produce melodrama.” Some examples of subgenres under this category are coming-of-age, historical epic, medical drama, and psychological drama. Quite a bit of subgenres are set under this genre!</p>
+<p>Particularly, I am interested in the subgenre Epic, described as “grand and sweeping stories often set against significant historical, cultural, or societal backdrops. Epic dramas are characterized by their scope, scale, and often lengthy runtime, as they aim to capture the grandeur of human experiences, events, and emotions.”</p>
+</section>
+<section id="successful-personnel-in-the-genre" class="level2">
+<h2 class="anchored" data-anchor-id="successful-personnel-in-the-genre">Successful Personnel in the Genre</h2>
+</section>
+<section id="task-5-key-personnel" class="level2">
+<h2 class="anchored" data-anchor-id="task-5-key-personnel">Task 5 Key Personnel</h2>
+<p>Based on my interest in pursuing a drama movie, set in the subgenre epic, I would like to create a team with Christopher Nolan as the director. He has experience in creating drama movies that are “successful”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join Christopher Nolan's projects with the title.basics dataset to get genres</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>nolan_projects_with_genres <span class="ot">&lt;-</span> nolan_projects <span class="sc">%&gt;%</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(genres, <span class="at">sep =</span> <span class="st">","</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(genres <span class="sc">==</span> <span class="st">"Drama"</span>)  <span class="co"># Filter for drama movies</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with the ratings dataset to calculate success metrics for drama movies</span></span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>nolan_drama_success <span class="ot">&lt;-</span> nolan_projects_with_genres <span class="sc">%&gt;%</span></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes <span class="sc">+</span> <span class="dv">1</span>))  <span class="co"># Calculate success metric</span></span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Print Christopher Nolan's drama movies based on success metric</span></span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Christopher Nolan's Successful Drama Movies:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Christopher Nolan's Successful Drama Movies:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nolan_drama_success <span class="sc">%&gt;%</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, startYear, averageRating, numVotes, success_metric) <span class="sc">%&gt;%</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  primaryTitle    startYear averageRating numVotes success_metric
+  &lt;chr&gt;               &lt;dbl&gt;         &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;
+1 The Dark Knight      2008           9    2922922          134. 
+2 Interstellar         2014           8.7  2161548          127. 
+3 Batman Begins        2005           8.2  1603362          117. 
+4 Oppenheimer          2023           8.3   797550          113. 
+5 Dunkirk              2017           7.8   752538          106. 
+6 Insomnia             2002           7.2   323258           91.3</code></pre>
+</div>
+</div>
+<p>An established actor I would like to add to the team is Leonardo DiCaprio. Not only is he but he has worked on projects with Christopher Nolan in the past.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Find Leonardo DiCaprio's nconst (unique identifier for individuals)</span></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>leonardo <span class="ot">&lt;-</span> NAME_BASICS <span class="sc">%&gt;%</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primaryName <span class="sc">==</span> <span class="st">"Leonardo DiCaprio"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(nconst)</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Get all projects where Leonardo DiCaprio is an actor</span></span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>leonardo_projects <span class="ot">&lt;-</span> TITLE_PRINCIPALS <span class="sc">%&gt;%</span></span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nconst <span class="sc">==</span> leonardo<span class="sc">$</span>nconst, category <span class="sc">==</span> <span class="st">"actor"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tconst)</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Join Leonardo DiCaprio's projects with the ratings data to calculate success metrics</span></span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>leonardo_ratings <span class="ot">&lt;-</span> leonardo_projects <span class="sc">%&gt;%</span></span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes <span class="sc">+</span> <span class="dv">1</span>))  <span class="co"># Success metric calculation</span></span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with title.basics to get the titles and release years for validation</span></span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>leonardo_success <span class="ot">&lt;-</span> leonardo_ratings <span class="sc">%&gt;%</span></span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, startYear, averageRating, numVotes, success_metric) <span class="sc">%&gt;%</span></span>
+<span id="cb78-22"><a href="#cb78-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric))</span>
+<span id="cb78-23"><a href="#cb78-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-24"><a href="#cb78-24" aria-hidden="true" tabindex="-1"></a>leonardo_success <span class="sc">%&gt;%</span></span>
+<span id="cb78-25"><a href="#cb78-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb78-26"><a href="#cb78-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb78-27"><a href="#cb78-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Leonardo DiCaprio's Top Movies by Success Metric"</span></span>
+<span id="cb78-28"><a href="#cb78-28" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="aiwlrxvuxb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#aiwlrxvuxb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#aiwlrxvuxb thead, #aiwlrxvuxb tbody, #aiwlrxvuxb tfoot, #aiwlrxvuxb tr, #aiwlrxvuxb td, #aiwlrxvuxb th {
+  border-style: none;
+}
+
+#aiwlrxvuxb p {
+  margin: 0;
+  padding: 0;
+}
+
+#aiwlrxvuxb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#aiwlrxvuxb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#aiwlrxvuxb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#aiwlrxvuxb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#aiwlrxvuxb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#aiwlrxvuxb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#aiwlrxvuxb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#aiwlrxvuxb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#aiwlrxvuxb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#aiwlrxvuxb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#aiwlrxvuxb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#aiwlrxvuxb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#aiwlrxvuxb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#aiwlrxvuxb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#aiwlrxvuxb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#aiwlrxvuxb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#aiwlrxvuxb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#aiwlrxvuxb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#aiwlrxvuxb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#aiwlrxvuxb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#aiwlrxvuxb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#aiwlrxvuxb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#aiwlrxvuxb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#aiwlrxvuxb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#aiwlrxvuxb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#aiwlrxvuxb .gt_left {
+  text-align: left;
+}
+
+#aiwlrxvuxb .gt_center {
+  text-align: center;
+}
+
+#aiwlrxvuxb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#aiwlrxvuxb .gt_font_normal {
+  font-weight: normal;
+}
+
+#aiwlrxvuxb .gt_font_bold {
+  font-weight: bold;
+}
+
+#aiwlrxvuxb .gt_font_italic {
+  font-style: italic;
+}
+
+#aiwlrxvuxb .gt_super {
+  font-size: 65%;
+}
+
+#aiwlrxvuxb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#aiwlrxvuxb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#aiwlrxvuxb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#aiwlrxvuxb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#aiwlrxvuxb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#aiwlrxvuxb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#aiwlrxvuxb .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#aiwlrxvuxb .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#aiwlrxvuxb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_heading">
+<th colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border">Leonardo DiCaprio's Top Movies by Success Metric</th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="primaryTitle" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">primaryTitle</th>
+<th id="startYear" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">startYear</th>
+<th id="averageRating" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">averageRating</th>
+<th id="numVotes" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">numVotes</th>
+<th id="success_metric" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">success_metric</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Inception</td>
+<td class="gt_row gt_right" headers="startYear">2010</td>
+<td class="gt_row gt_right" headers="averageRating">8.8</td>
+<td class="gt_row gt_right" headers="numVotes">2595555</td>
+<td class="gt_row gt_right" headers="success_metric">129.96994</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Django Unchained</td>
+<td class="gt_row gt_right" headers="startYear">2012</td>
+<td class="gt_row gt_right" headers="averageRating">8.5</td>
+<td class="gt_row gt_right" headers="numVotes">1729019</td>
+<td class="gt_row gt_right" headers="success_metric">122.08606</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Departed</td>
+<td class="gt_row gt_right" headers="startYear">2006</td>
+<td class="gt_row gt_right" headers="averageRating">8.5</td>
+<td class="gt_row gt_right" headers="numVotes">1444597</td>
+<td class="gt_row gt_right" headers="success_metric">120.55840</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Wolf of Wall Street</td>
+<td class="gt_row gt_right" headers="startYear">2013</td>
+<td class="gt_row gt_right" headers="averageRating">8.2</td>
+<td class="gt_row gt_right" headers="numVotes">1620302</td>
+<td class="gt_row gt_right" headers="success_metric">117.24461</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Shutter Island</td>
+<td class="gt_row gt_right" headers="startYear">2010</td>
+<td class="gt_row gt_right" headers="averageRating">8.2</td>
+<td class="gt_row gt_right" headers="numVotes">1490811</td>
+<td class="gt_row gt_right" headers="success_metric">116.56162</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Catch Me If You Can</td>
+<td class="gt_row gt_right" headers="startYear">2002</td>
+<td class="gt_row gt_right" headers="averageRating">8.1</td>
+<td class="gt_row gt_right" headers="numVotes">1120635</td>
+<td class="gt_row gt_right" headers="success_metric">112.82820</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Titanic</td>
+<td class="gt_row gt_right" headers="startYear">1997</td>
+<td class="gt_row gt_right" headers="averageRating">7.9</td>
+<td class="gt_row gt_right" headers="numVotes">1305247</td>
+<td class="gt_row gt_right" headers="success_metric">111.24704</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Revenant</td>
+<td class="gt_row gt_right" headers="startYear">2015</td>
+<td class="gt_row gt_right" headers="averageRating">8.0</td>
+<td class="gt_row gt_right" headers="numVotes">888373</td>
+<td class="gt_row gt_right" headers="success_metric">109.57718</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Blood Diamond</td>
+<td class="gt_row gt_right" headers="startYear">2006</td>
+<td class="gt_row gt_right" headers="averageRating">8.0</td>
+<td class="gt_row gt_right" headers="numVotes">594079</td>
+<td class="gt_row gt_right" headers="success_metric">106.35815</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Once Upon a Time... in Hollywood</td>
+<td class="gt_row gt_right" headers="startYear">2019</td>
+<td class="gt_row gt_right" headers="averageRating">7.6</td>
+<td class="gt_row gt_right" headers="numVotes">870617</td>
+<td class="gt_row gt_right" headers="success_metric">103.94489</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Gangs of New York</td>
+<td class="gt_row gt_right" headers="startYear">2002</td>
+<td class="gt_row gt_right" headers="averageRating">7.5</td>
+<td class="gt_row gt_right" headers="numVotes">478759</td>
+<td class="gt_row gt_right" headers="success_metric">98.09216</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Aviator</td>
+<td class="gt_row gt_right" headers="startYear">2004</td>
+<td class="gt_row gt_right" headers="averageRating">7.5</td>
+<td class="gt_row gt_right" headers="numVotes">388163</td>
+<td class="gt_row gt_right" headers="success_metric">96.51887</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Don't Look Up</td>
+<td class="gt_row gt_right" headers="startYear">2021</td>
+<td class="gt_row gt_right" headers="averageRating">7.2</td>
+<td class="gt_row gt_right" headers="numVotes">616776</td>
+<td class="gt_row gt_right" headers="success_metric">95.99229</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">What's Eating Gilbert Grape</td>
+<td class="gt_row gt_right" headers="startYear">1993</td>
+<td class="gt_row gt_right" headers="averageRating">7.7</td>
+<td class="gt_row gt_right" headers="numVotes">257226</td>
+<td class="gt_row gt_right" headers="success_metric">95.92440</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Great Gatsby</td>
+<td class="gt_row gt_right" headers="startYear">2013</td>
+<td class="gt_row gt_right" headers="averageRating">7.2</td>
+<td class="gt_row gt_right" headers="numVotes">606478</td>
+<td class="gt_row gt_right" headers="success_metric">95.87106</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Killers of the Flower Moon</td>
+<td class="gt_row gt_right" headers="startYear">2023</td>
+<td class="gt_row gt_right" headers="averageRating">7.6</td>
+<td class="gt_row gt_right" headers="numVotes">259270</td>
+<td class="gt_row gt_right" headers="success_metric">94.73878</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Revolutionary Road</td>
+<td class="gt_row gt_right" headers="startYear">2008</td>
+<td class="gt_row gt_right" headers="averageRating">7.3</td>
+<td class="gt_row gt_right" headers="numVotes">227157</td>
+<td class="gt_row gt_right" headers="success_metric">90.03383</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Body of Lies</td>
+<td class="gt_row gt_right" headers="startYear">2008</td>
+<td class="gt_row gt_right" headers="averageRating">7.0</td>
+<td class="gt_row gt_right" headers="numVotes">241618</td>
+<td class="gt_row gt_right" headers="success_metric">86.76582</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Basketball Diaries</td>
+<td class="gt_row gt_right" headers="startYear">1995</td>
+<td class="gt_row gt_right" headers="averageRating">7.3</td>
+<td class="gt_row gt_right" headers="numVotes">123141</td>
+<td class="gt_row gt_right" headers="success_metric">85.56398</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Romeo + Juliet</td>
+<td class="gt_row gt_right" headers="startYear">1996</td>
+<td class="gt_row gt_right" headers="averageRating">6.7</td>
+<td class="gt_row gt_right" headers="numVotes">247594</td>
+<td class="gt_row gt_right" headers="success_metric">83.21098</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Beach</td>
+<td class="gt_row gt_right" headers="startYear">2000</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">256833</td>
+<td class="gt_row gt_right" headers="success_metric">82.21082</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">This Boy's Life</td>
+<td class="gt_row gt_right" headers="startYear">1993</td>
+<td class="gt_row gt_right" headers="averageRating">7.3</td>
+<td class="gt_row gt_right" headers="numVotes">59109</td>
+<td class="gt_row gt_right" headers="success_metric">80.20623</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Man in the Iron Mask</td>
+<td class="gt_row gt_right" headers="startYear">1998</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">181004</td>
+<td class="gt_row gt_right" headers="success_metric">78.69082</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Man in the Iron Mask</td>
+<td class="gt_row gt_right" headers="startYear">1998</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">181004</td>
+<td class="gt_row gt_right" headers="success_metric">78.69082</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">J. Edgar</td>
+<td class="gt_row gt_right" headers="startYear">2011</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">134451</td>
+<td class="gt_row gt_right" headers="success_metric">76.75826</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Quick and the Dead</td>
+<td class="gt_row gt_right" headers="startYear">1995</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">105006</td>
+<td class="gt_row gt_right" headers="success_metric">75.15158</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Marvin's Room</td>
+<td class="gt_row gt_right" headers="startYear">1996</td>
+<td class="gt_row gt_right" headers="averageRating">6.7</td>
+<td class="gt_row gt_right" headers="numVotes">30396</td>
+<td class="gt_row gt_right" headers="success_metric">69.15806</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Celebrity</td>
+<td class="gt_row gt_right" headers="startYear">1998</td>
+<td class="gt_row gt_right" headers="averageRating">6.3</td>
+<td class="gt_row gt_right" headers="numVotes">28697</td>
+<td class="gt_row gt_right" headers="success_metric">64.66687</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Growing Pains</td>
+<td class="gt_row gt_right" headers="startYear">1985</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">16584</td>
+<td class="gt_row gt_right" headers="success_metric">64.12728</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Hubble</td>
+<td class="gt_row gt_right" headers="startYear">2010</td>
+<td class="gt_row gt_right" headers="averageRating">7.6</td>
+<td class="gt_row gt_right" headers="numVotes">4537</td>
+<td class="gt_row gt_right" headers="success_metric">63.99384</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Total Eclipse</td>
+<td class="gt_row gt_right" headers="startYear">1995</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">16978</td>
+<td class="gt_row gt_right" headers="success_metric">63.30826</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Inception: The Cobol Job</td>
+<td class="gt_row gt_right" headers="startYear">2010</td>
+<td class="gt_row gt_right" headers="averageRating">7.5</td>
+<td class="gt_row gt_right" headers="numVotes">3793</td>
+<td class="gt_row gt_right" headers="success_metric">61.80882</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Audition</td>
+<td class="gt_row gt_right" headers="startYear">2015</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">4636</td>
+<td class="gt_row gt_right" headers="success_metric">55.71603</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Ice on Fire</td>
+<td class="gt_row gt_right" headers="startYear">2019</td>
+<td class="gt_row gt_right" headers="averageRating">7.4</td>
+<td class="gt_row gt_right" headers="numVotes">1701</td>
+<td class="gt_row gt_right" headers="success_metric">55.05274</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Poison Ivy</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">5.4</td>
+<td class="gt_row gt_right" headers="numVotes">20446</td>
+<td class="gt_row gt_right" headers="success_metric">53.59819</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Don's Plum</td>
+<td class="gt_row gt_right" headers="startYear">2001</td>
+<td class="gt_row gt_right" headers="averageRating">5.5</td>
+<td class="gt_row gt_right" headers="numVotes">4818</td>
+<td class="gt_row gt_right" headers="success_metric">46.64177</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Critters 3</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">4.5</td>
+<td class="gt_row gt_right" headers="numVotes">13492</td>
+<td class="gt_row gt_right" headers="success_metric">42.79467</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Episode #27.1</td>
+<td class="gt_row gt_right" headers="startYear">1979</td>
+<td class="gt_row gt_right" headers="averageRating">8.7</td>
+<td class="gt_row gt_right" headers="numVotes">121</td>
+<td class="gt_row gt_right" headers="success_metric">41.79498</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Thanksgiving with a T That Rhymes with B That Stands for Basketball</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">8.0</td>
+<td class="gt_row gt_right" headers="numVotes">171</td>
+<td class="gt_row gt_right" headers="success_metric">41.17996</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Menage a Luke</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">7.0</td>
+<td class="gt_row gt_right" headers="numVotes">240</td>
+<td class="gt_row gt_right" headers="success_metric">38.39358</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Stop, Luke and Listen</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">7.0</td>
+<td class="gt_row gt_right" headers="numVotes">239</td>
+<td class="gt_row gt_right" headers="success_metric">38.36447</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Back to School</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.9</td>
+<td class="gt_row gt_right" headers="numVotes">253</td>
+<td class="gt_row gt_right" headers="success_metric">38.20761</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">In vino veritas</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">7.0</td>
+<td class="gt_row gt_right" headers="numVotes">229</td>
+<td class="gt_row gt_right" headers="success_metric">38.06656</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Cards and Cars</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">7.3</td>
+<td class="gt_row gt_right" headers="numVotes">174</td>
+<td class="gt_row gt_right" headers="success_metric">37.70294</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Fun for Kids</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">7.2</td>
+<td class="gt_row gt_right" headers="numVotes">174</td>
+<td class="gt_row gt_right" headers="success_metric">37.18646</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">There Must Be a Pony</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.8</td>
+<td class="gt_row gt_right" headers="numVotes">229</td>
+<td class="gt_row gt_right" headers="success_metric">36.97894</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Plague</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">7.1</td>
+<td class="gt_row gt_right" headers="numVotes">179</td>
+<td class="gt_row gt_right" headers="success_metric">36.86999</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Gil vs. the Deck</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">7.1</td>
+<td class="gt_row gt_right" headers="numVotes">176</td>
+<td class="gt_row gt_right" headers="success_metric">36.75066</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">I Never Invested for My Father</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">7.1</td>
+<td class="gt_row gt_right" headers="numVotes">172</td>
+<td class="gt_row gt_right" headers="success_metric">36.58837</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Young and the Homeless</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.7</td>
+<td class="gt_row gt_right" headers="numVotes">233</td>
+<td class="gt_row gt_right" headers="success_metric">36.55065</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Bad Day Cafe</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.7</td>
+<td class="gt_row gt_right" headers="numVotes">229</td>
+<td class="gt_row gt_right" headers="success_metric">36.43513</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">My Dad Can Beat Up Your BMW</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">7.0</td>
+<td class="gt_row gt_right" headers="numVotes">179</td>
+<td class="gt_row gt_right" headers="success_metric">36.35070</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Truck Stops Here</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">240</td>
+<td class="gt_row gt_right" headers="success_metric">36.19966</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Five Fingers of Ben</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">232</td>
+<td class="gt_row gt_right" headers="success_metric">35.97685</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Titanic: 25 Years Later with James Cameron</td>
+<td class="gt_row gt_right" headers="startYear">2023</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">246</td>
+<td class="gt_row gt_right" headers="success_metric">35.81102</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Home Malone</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">226</td>
+<td class="gt_row gt_right" headers="success_metric">35.80467</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Small Surprises</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">6.9</td>
+<td class="gt_row gt_right" headers="numVotes">178</td>
+<td class="gt_row gt_right" headers="success_metric">35.79296</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Love Stinks</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">6.8</td>
+<td class="gt_row gt_right" headers="numVotes">176</td>
+<td class="gt_row gt_right" headers="success_metric">35.19782</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Jason Sings the Blues</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">221</td>
+<td class="gt_row gt_right" headers="success_metric">35.11740</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Don't Go Changin'</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">6.4</td>
+<td class="gt_row gt_right" headers="numVotes">235</td>
+<td class="gt_row gt_right" headers="success_metric">34.96852</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Big Fix</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.4</td>
+<td class="gt_row gt_right" headers="numVotes">230</td>
+<td class="gt_row gt_right" headers="success_metric">34.83147</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Vicious Cycle</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">6.4</td>
+<td class="gt_row gt_right" headers="numVotes">225</td>
+<td class="gt_row gt_right" headers="success_metric">34.69142</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Honest Abe</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">6.3</td>
+<td class="gt_row gt_right" headers="numVotes">231</td>
+<td class="gt_row gt_right" headers="success_metric">34.31445</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Call of the Wild</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">6.3</td>
+<td class="gt_row gt_right" headers="numVotes">230</td>
+<td class="gt_row gt_right" headers="success_metric">34.28723</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">It's Not Easy Being Green</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.3</td>
+<td class="gt_row gt_right" headers="numVotes">228</td>
+<td class="gt_row gt_right" headers="success_metric">34.23245</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">B=MC2</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.3</td>
+<td class="gt_row gt_right" headers="numVotes">227</td>
+<td class="gt_row gt_right" headers="success_metric">34.20488</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Parenthood</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">5.7</td>
+<td class="gt_row gt_right" headers="numVotes">402</td>
+<td class="gt_row gt_right" headers="success_metric">34.19394</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Kid's Still Got It</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">6.3</td>
+<td class="gt_row gt_right" headers="numVotes">225</td>
+<td class="gt_row gt_right" headers="success_metric">34.14937</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Take My Parents, Please</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">169</td>
+<td class="gt_row gt_right" headers="success_metric">33.89627</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Hollow Halloween</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">171</td>
+<td class="gt_row gt_right" headers="success_metric">33.45871</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Episode #1.1472</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">6.4</td>
+<td class="gt_row gt_right" headers="numVotes">173</td>
+<td class="gt_row gt_right" headers="success_metric">33.01795</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Foot Shooting Party</td>
+<td class="gt_row gt_right" headers="startYear">1994</td>
+<td class="gt_row gt_right" headers="averageRating">5.1</td>
+<td class="gt_row gt_right" headers="numVotes">591</td>
+<td class="gt_row gt_right" headers="success_metric">32.55588</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Maggie's Brilliant Career</td>
+<td class="gt_row gt_right" headers="startYear">1992</td>
+<td class="gt_row gt_right" headers="averageRating">5.9</td>
+<td class="gt_row gt_right" headers="numVotes">233</td>
+<td class="gt_row gt_right" headers="success_metric">32.18639</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Paper Tigers</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">5.9</td>
+<td class="gt_row gt_right" headers="numVotes">224</td>
+<td class="gt_row gt_right" headers="success_metric">31.95499</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>This table proves that Leonardo DiCaprio is a great actor! An up and coming actor that I would like to bring is Timothée Chalamet. His most recent work is Dune, an American epic science fiction film based off the book series, Dune.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Find Timothée Chalamet's nconst (unique identifier for individuals)</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>timothee <span class="ot">&lt;-</span> NAME_BASICS <span class="sc">%&gt;%</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primaryName <span class="sc">==</span> <span class="st">"Timothée Chalamet"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(nconst)</span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Get all projects where Timothée Chalamet is an actor</span></span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>timothee_projects <span class="ot">&lt;-</span> TITLE_PRINCIPALS <span class="sc">%&gt;%</span></span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nconst <span class="sc">==</span> timothee<span class="sc">$</span>nconst, category <span class="sc">==</span> <span class="st">"actor"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tconst)</span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Join Timothée Chalamet's projects with the ratings data to calculate success metrics</span></span>
+<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a>timothee_ratings <span class="ot">&lt;-</span> timothee_projects <span class="sc">%&gt;%</span></span>
+<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-14"><a href="#cb79-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">success_metric =</span> averageRating <span class="sc">*</span> <span class="fu">log</span>(numVotes <span class="sc">+</span> <span class="dv">1</span>))  <span class="co"># Success metric calculation</span></span>
+<span id="cb79-15"><a href="#cb79-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-16"><a href="#cb79-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Join with title.basics to get the titles and release years for validation</span></span>
+<span id="cb79-17"><a href="#cb79-17" aria-hidden="true" tabindex="-1"></a>timothee_success <span class="ot">&lt;-</span> timothee_ratings <span class="sc">%&gt;%</span></span>
+<span id="cb79-18"><a href="#cb79-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_BASICS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-19"><a href="#cb79-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, startYear, averageRating, numVotes, success_metric) <span class="sc">%&gt;%</span></span>
+<span id="cb79-20"><a href="#cb79-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(success_metric))</span>
+<span id="cb79-21"><a href="#cb79-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-22"><a href="#cb79-22" aria-hidden="true" tabindex="-1"></a>timothee_success <span class="sc">%&gt;%</span></span>
+<span id="cb79-23"><a href="#cb79-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb79-24"><a href="#cb79-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb79-25"><a href="#cb79-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Timothée Chalamet's Top Movies by Success Metric"</span></span>
+<span id="cb79-26"><a href="#cb79-26" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="qijrmiajhv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qijrmiajhv table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#qijrmiajhv thead, #qijrmiajhv tbody, #qijrmiajhv tfoot, #qijrmiajhv tr, #qijrmiajhv td, #qijrmiajhv th {
+  border-style: none;
+}
+
+#qijrmiajhv p {
+  margin: 0;
+  padding: 0;
+}
+
+#qijrmiajhv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#qijrmiajhv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#qijrmiajhv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#qijrmiajhv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qijrmiajhv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qijrmiajhv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qijrmiajhv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qijrmiajhv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qijrmiajhv .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#qijrmiajhv .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#qijrmiajhv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qijrmiajhv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qijrmiajhv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qijrmiajhv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qijrmiajhv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qijrmiajhv .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#qijrmiajhv .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#qijrmiajhv .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#qijrmiajhv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qijrmiajhv .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#qijrmiajhv .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qijrmiajhv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qijrmiajhv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qijrmiajhv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qijrmiajhv .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qijrmiajhv .gt_left {
+  text-align: left;
+}
+
+#qijrmiajhv .gt_center {
+  text-align: center;
+}
+
+#qijrmiajhv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qijrmiajhv .gt_font_normal {
+  font-weight: normal;
+}
+
+#qijrmiajhv .gt_font_bold {
+  font-weight: bold;
+}
+
+#qijrmiajhv .gt_font_italic {
+  font-style: italic;
+}
+
+#qijrmiajhv .gt_super {
+  font-size: 65%;
+}
+
+#qijrmiajhv .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#qijrmiajhv .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#qijrmiajhv .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#qijrmiajhv .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#qijrmiajhv .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#qijrmiajhv .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#qijrmiajhv .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#qijrmiajhv .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#qijrmiajhv div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_heading">
+<th colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border">Timothée Chalamet's Top Movies by Success Metric</th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="primaryTitle" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">primaryTitle</th>
+<th id="startYear" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">startYear</th>
+<th id="averageRating" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">averageRating</th>
+<th id="numVotes" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">numVotes</th>
+<th id="success_metric" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">success_metric</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Interstellar</td>
+<td class="gt_row gt_right" headers="startYear">2014</td>
+<td class="gt_row gt_right" headers="averageRating">8.7</td>
+<td class="gt_row gt_right" headers="numVotes">2161548</td>
+<td class="gt_row gt_right" headers="success_metric">126.90112</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Dune: Part Two</td>
+<td class="gt_row gt_right" headers="startYear">2024</td>
+<td class="gt_row gt_right" headers="averageRating">8.5</td>
+<td class="gt_row gt_right" headers="numVotes">518546</td>
+<td class="gt_row gt_right" headers="success_metric">111.84968</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Dune: Part One</td>
+<td class="gt_row gt_right" headers="startYear">2021</td>
+<td class="gt_row gt_right" headers="averageRating">8.0</td>
+<td class="gt_row gt_right" headers="numVotes">903916</td>
+<td class="gt_row gt_right" headers="success_metric">109.71594</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Call Me by Your Name</td>
+<td class="gt_row gt_right" headers="startYear">2017</td>
+<td class="gt_row gt_right" headers="averageRating">7.8</td>
+<td class="gt_row gt_right" headers="numVotes">325336</td>
+<td class="gt_row gt_right" headers="success_metric">99.00241</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Little Women</td>
+<td class="gt_row gt_right" headers="startYear">2019</td>
+<td class="gt_row gt_right" headers="averageRating">7.8</td>
+<td class="gt_row gt_right" headers="numVotes">253631</td>
+<td class="gt_row gt_right" headers="success_metric">97.06039</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Don't Look Up</td>
+<td class="gt_row gt_right" headers="startYear">2021</td>
+<td class="gt_row gt_right" headers="averageRating">7.2</td>
+<td class="gt_row gt_right" headers="numVotes">616776</td>
+<td class="gt_row gt_right" headers="success_metric">95.99229</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Lady Bird</td>
+<td class="gt_row gt_right" headers="startYear">2017</td>
+<td class="gt_row gt_right" headers="averageRating">7.4</td>
+<td class="gt_row gt_right" headers="numVotes">339316</td>
+<td class="gt_row gt_right" headers="success_metric">94.23671</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Beautiful Boy</td>
+<td class="gt_row gt_right" headers="startYear">2018</td>
+<td class="gt_row gt_right" headers="averageRating">7.4</td>
+<td class="gt_row gt_right" headers="numVotes">104692</td>
+<td class="gt_row gt_right" headers="success_metric">85.53503</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The French Dispatch</td>
+<td class="gt_row gt_right" headers="startYear">2021</td>
+<td class="gt_row gt_right" headers="averageRating">7.1</td>
+<td class="gt_row gt_right" headers="numVotes">153812</td>
+<td class="gt_row gt_right" headers="success_metric">84.79880</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Wonka</td>
+<td class="gt_row gt_right" headers="startYear">2023</td>
+<td class="gt_row gt_right" headers="averageRating">7.0</td>
+<td class="gt_row gt_right" headers="numVotes">159203</td>
+<td class="gt_row gt_right" headers="success_metric">83.84559</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Bones and All</td>
+<td class="gt_row gt_right" headers="startYear">2022</td>
+<td class="gt_row gt_right" headers="averageRating">6.8</td>
+<td class="gt_row gt_right" headers="numVotes">62180</td>
+<td class="gt_row gt_right" headers="success_metric">75.05707</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Entergalactic</td>
+<td class="gt_row gt_right" headers="startYear">2022</td>
+<td class="gt_row gt_right" headers="averageRating">7.3</td>
+<td class="gt_row gt_right" headers="numVotes">16550</td>
+<td class="gt_row gt_right" headers="success_metric">70.91367</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">A Rainy Day in New York</td>
+<td class="gt_row gt_right" headers="startYear">2019</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">53453</td>
+<td class="gt_row gt_right" headers="success_metric">70.76275</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Men, Women &amp; Children</td>
+<td class="gt_row gt_right" headers="startYear">2014</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">33990</td>
+<td class="gt_row gt_right" headers="success_metric">68.86342</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Hot Summer Nights</td>
+<td class="gt_row gt_right" headers="startYear">2017</td>
+<td class="gt_row gt_right" headers="averageRating">6.4</td>
+<td class="gt_row gt_right" headers="numVotes">24322</td>
+<td class="gt_row gt_right" headers="success_metric">64.63474</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Miss Stevens</td>
+<td class="gt_row gt_right" headers="startYear">2016</td>
+<td class="gt_row gt_right" headers="averageRating">6.6</td>
+<td class="gt_row gt_right" headers="numVotes">7986</td>
+<td class="gt_row gt_right" headers="success_metric">59.30477</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Love the Coopers</td>
+<td class="gt_row gt_right" headers="startYear">2015</td>
+<td class="gt_row gt_right" headers="averageRating">5.8</td>
+<td class="gt_row gt_right" headers="numVotes">26963</td>
+<td class="gt_row gt_right" headers="success_metric">59.17310</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Cadillac: How Do You Drive with Scissorhands?</td>
+<td class="gt_row gt_right" headers="startYear">2021</td>
+<td class="gt_row gt_right" headers="averageRating">8.1</td>
+<td class="gt_row gt_right" headers="numVotes">843</td>
+<td class="gt_row gt_right" headers="success_metric">54.57904</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Adderall Diaries</td>
+<td class="gt_row gt_right" headers="startYear">2015</td>
+<td class="gt_row gt_right" headers="averageRating">5.2</td>
+<td class="gt_row gt_right" headers="numVotes">6273</td>
+<td class="gt_row gt_right" headers="success_metric">45.46968</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Dune</td>
+<td class="gt_row gt_right" headers="startYear">2021</td>
+<td class="gt_row gt_right" headers="averageRating">8.0</td>
+<td class="gt_row gt_right" headers="numVotes">187</td>
+<td class="gt_row gt_right" headers="success_metric">41.89154</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">One and Two</td>
+<td class="gt_row gt_right" headers="startYear">2015</td>
+<td class="gt_row gt_right" headers="averageRating">5.2</td>
+<td class="gt_row gt_right" headers="numVotes">2420</td>
+<td class="gt_row gt_right" headers="success_metric">40.51807</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Great Performers: Horror Show</td>
+<td class="gt_row gt_right" headers="startYear">2017</td>
+<td class="gt_row gt_right" headers="averageRating">6.5</td>
+<td class="gt_row gt_right" headers="numVotes">334</td>
+<td class="gt_row gt_right" headers="success_metric">37.79185</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Imperfect Storm</td>
+<td class="gt_row gt_right" headers="startYear">2012</td>
+<td class="gt_row gt_right" headers="averageRating">7.4</td>
+<td class="gt_row gt_right" headers="numVotes">136</td>
+<td class="gt_row gt_right" headers="success_metric">36.40786</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Bleu de Chanel</td>
+<td class="gt_row gt_right" headers="startYear">2024</td>
+<td class="gt_row gt_right" headers="averageRating">6.7</td>
+<td class="gt_row gt_right" headers="numVotes">201</td>
+<td class="gt_row gt_right" headers="success_metric">35.56539</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Spinners</td>
+<td class="gt_row gt_right" headers="startYear">2014</td>
+<td class="gt_row gt_right" headers="averageRating">5.5</td>
+<td class="gt_row gt_right" headers="numVotes">436</td>
+<td class="gt_row gt_right" headers="success_metric">33.43963</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Sweet Tooth</td>
+<td class="gt_row gt_right" headers="startYear">2008</td>
+<td class="gt_row gt_right" headers="averageRating">6.1</td>
+<td class="gt_row gt_right" headers="numVotes">130</td>
+<td class="gt_row gt_right" headers="success_metric">29.73870</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Surprisingly, I did not know that Timothée Chamalet was also in a Christopher Nolan project. With 11 movies above the success threshold, I think Timothée will be a great addition to the team.</p>
+</section>
+<section id="nostalgia-and-remakes" class="level2">
+<h2 class="anchored" data-anchor-id="nostalgia-and-remakes">Nostalgia and Remakes</h2>
+</section>
+<section id="task-6-finding-a-classic-movie-to-remake" class="level2">
+<h2 class="anchored" data-anchor-id="task-6-finding-a-classic-movie-to-remake">Task 6 Finding a Classic Movie to Remake</h2>
+<p>Of course, now it is time to create a killer plot. One way is to look at and remake a classic film. The criteria for a classic film is as follows: * large number of IMDb ratings &gt;100,000 * high average rating &gt;8 * have not been remade in the past 25 years</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for movies released before 1999 (at least 25 years old)</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>classic_movies <span class="ot">&lt;-</span> TITLE_BASICS <span class="sc">%&gt;%</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(titleType <span class="sc">==</span> <span class="st">"movie"</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(startYear) <span class="sc">&lt;</span> <span class="dv">1999</span>)</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with ratings data to find movies with high ratings and large number of votes</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>classic_movies_with_ratings <span class="ot">&lt;-</span> classic_movies <span class="sc">%&gt;%</span></span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(TITLE_RATINGS, <span class="at">by =</span> <span class="st">"tconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(numVotes <span class="sc">&gt;</span> <span class="dv">100000</span> <span class="sc">&amp;</span> averageRating <span class="sc">&gt;</span> <span class="fl">8.5</span>)  <span class="co"># Filter for high votes and high ratings</span></span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a><span class="co">#  Sort by highest average rating and number of votes to find top movies</span></span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>top_classic_movies <span class="ot">&lt;-</span> classic_movies_with_ratings <span class="sc">%&gt;%</span></span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(averageRating), <span class="fu">desc</span>(numVotes))</span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Exclude movies that have been remade in the past 25 years</span></span>
+<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a>remade_movies <span class="ot">&lt;-</span> TITLE_BASICS <span class="sc">%&gt;%</span></span>
+<span id="cb80-16"><a href="#cb80-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(titleType <span class="sc">==</span> <span class="st">"remake"</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(startYear) <span class="sc">&gt;=</span> <span class="dv">1999</span>)</span>
+<span id="cb80-17"><a href="#cb80-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-18"><a href="#cb80-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out remade movies from top classic movies</span></span>
+<span id="cb80-19"><a href="#cb80-19" aria-hidden="true" tabindex="-1"></a>classic_movies_to_remake <span class="ot">&lt;-</span> top_classic_movies <span class="sc">%&gt;%</span></span>
+<span id="cb80-20"><a href="#cb80-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>tconst <span class="sc">%in%</span> remade_movies<span class="sc">$</span>tconst)</span>
+<span id="cb80-21"><a href="#cb80-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-22"><a href="#cb80-22" aria-hidden="true" tabindex="-1"></a>classic_movies_to_remake <span class="sc">|&gt;</span></span>
+<span id="cb80-23"><a href="#cb80-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryTitle, startYear, averageRating, numVotes) <span class="sc">|&gt;</span></span>
+<span id="cb80-24"><a href="#cb80-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
+<span id="cb80-25"><a href="#cb80-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">"Top Classic Movies to Remake"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="yxfaeeiejh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yxfaeeiejh table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#yxfaeeiejh thead, #yxfaeeiejh tbody, #yxfaeeiejh tfoot, #yxfaeeiejh tr, #yxfaeeiejh td, #yxfaeeiejh th {
+  border-style: none;
+}
+
+#yxfaeeiejh p {
+  margin: 0;
+  padding: 0;
+}
+
+#yxfaeeiejh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#yxfaeeiejh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yxfaeeiejh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yxfaeeiejh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yxfaeeiejh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yxfaeeiejh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yxfaeeiejh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yxfaeeiejh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yxfaeeiejh .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#yxfaeeiejh .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#yxfaeeiejh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yxfaeeiejh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yxfaeeiejh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yxfaeeiejh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yxfaeeiejh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yxfaeeiejh .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#yxfaeeiejh .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#yxfaeeiejh .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#yxfaeeiejh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yxfaeeiejh .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#yxfaeeiejh .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yxfaeeiejh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yxfaeeiejh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yxfaeeiejh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yxfaeeiejh .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yxfaeeiejh .gt_left {
+  text-align: left;
+}
+
+#yxfaeeiejh .gt_center {
+  text-align: center;
+}
+
+#yxfaeeiejh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yxfaeeiejh .gt_font_normal {
+  font-weight: normal;
+}
+
+#yxfaeeiejh .gt_font_bold {
+  font-weight: bold;
+}
+
+#yxfaeeiejh .gt_font_italic {
+  font-style: italic;
+}
+
+#yxfaeeiejh .gt_super {
+  font-size: 65%;
+}
+
+#yxfaeeiejh .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#yxfaeeiejh .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#yxfaeeiejh .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#yxfaeeiejh .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#yxfaeeiejh .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#yxfaeeiejh .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#yxfaeeiejh .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#yxfaeeiejh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#yxfaeeiejh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_heading">
+<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border">Top Classic Movies to Remake</th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="primaryTitle" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">primaryTitle</th>
+<th id="startYear" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">startYear</th>
+<th id="averageRating" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">averageRating</th>
+<th id="numVotes" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">numVotes</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Shawshank Redemption</td>
+<td class="gt_row gt_right" headers="startYear">1994</td>
+<td class="gt_row gt_right" headers="averageRating">9.3</td>
+<td class="gt_row gt_right" headers="numVotes">2942823</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Godfather</td>
+<td class="gt_row gt_right" headers="startYear">1972</td>
+<td class="gt_row gt_right" headers="averageRating">9.2</td>
+<td class="gt_row gt_right" headers="numVotes">2051186</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Schindler's List</td>
+<td class="gt_row gt_right" headers="startYear">1993</td>
+<td class="gt_row gt_right" headers="averageRating">9.0</td>
+<td class="gt_row gt_right" headers="numVotes">1475891</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Godfather Part II</td>
+<td class="gt_row gt_right" headers="startYear">1974</td>
+<td class="gt_row gt_right" headers="averageRating">9.0</td>
+<td class="gt_row gt_right" headers="numVotes">1386499</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">12 Angry Men</td>
+<td class="gt_row gt_right" headers="startYear">1957</td>
+<td class="gt_row gt_right" headers="averageRating">9.0</td>
+<td class="gt_row gt_right" headers="numVotes">884567</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Pulp Fiction</td>
+<td class="gt_row gt_right" headers="startYear">1994</td>
+<td class="gt_row gt_right" headers="averageRating">8.9</td>
+<td class="gt_row gt_right" headers="numVotes">2260017</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Forrest Gump</td>
+<td class="gt_row gt_right" headers="startYear">1994</td>
+<td class="gt_row gt_right" headers="averageRating">8.8</td>
+<td class="gt_row gt_right" headers="numVotes">2301630</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">The Good, the Bad and the Ugly</td>
+<td class="gt_row gt_right" headers="startYear">1966</td>
+<td class="gt_row gt_right" headers="averageRating">8.8</td>
+<td class="gt_row gt_right" headers="numVotes">824512</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Star Wars: Episode V - The Empire Strikes Back</td>
+<td class="gt_row gt_right" headers="startYear">1980</td>
+<td class="gt_row gt_right" headers="averageRating">8.7</td>
+<td class="gt_row gt_right" headers="numVotes">1401591</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Goodfellas</td>
+<td class="gt_row gt_right" headers="startYear">1990</td>
+<td class="gt_row gt_right" headers="averageRating">8.7</td>
+<td class="gt_row gt_right" headers="numVotes">1280574</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">One Flew Over the Cuckoo's Nest</td>
+<td class="gt_row gt_right" headers="startYear">1975</td>
+<td class="gt_row gt_right" headers="averageRating">8.7</td>
+<td class="gt_row gt_right" headers="numVotes">1087006</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Se7en</td>
+<td class="gt_row gt_right" headers="startYear">1995</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">1836180</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">The Silence of the Lambs</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">1578087</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Saving Private Ryan</td>
+<td class="gt_row gt_right" headers="startYear">1998</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">1521594</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Star Wars: Episode IV - A New Hope</td>
+<td class="gt_row gt_right" headers="startYear">1977</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">1471222</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">Terminator 2: Judgment Day</td>
+<td class="gt_row gt_right" headers="startYear">1991</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">1194496</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Life Is Beautiful</td>
+<td class="gt_row gt_right" headers="startYear">1997</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">754383</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryTitle">It's a Wonderful Life</td>
+<td class="gt_row gt_right" headers="startYear">1946</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">505818</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryTitle">Seven Samurai</td>
+<td class="gt_row gt_right" headers="startYear">1954</td>
+<td class="gt_row gt_right" headers="averageRating">8.6</td>
+<td class="gt_row gt_right" headers="numVotes">372202</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>From the list, I would like to remake <em>Schindler’s List</em>, a movie based during World War II. Since the movie was made in 1993, I believe most of the cast is still around.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the tconst for Schindler's List</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>schindlers_list <span class="ot">&lt;-</span> TITLE_BASICS <span class="sc">%&gt;%</span></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primaryTitle <span class="sc">==</span> <span class="st">"Schindler's List"</span> <span class="sc">&amp;</span> titleType <span class="sc">==</span> <span class="st">"movie"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tconst)</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Get key talent (actors, directors, writers) from Schindler's List</span></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>key_talent <span class="ot">&lt;-</span> TITLE_PRINCIPALS <span class="sc">%&gt;%</span></span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(tconst <span class="sc">==</span> schindlers_list<span class="sc">$</span>tconst <span class="sc">&amp;</span> category <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"actor"</span>, <span class="st">"director"</span>, <span class="st">"writer"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(nconst, category)</span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Join with the name.basics dataset to check if they are still alive</span></span>
+<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a>key_talent_info <span class="ot">&lt;-</span> key_talent <span class="sc">%&gt;%</span></span>
+<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(NAME_BASICS, <span class="at">by =</span> <span class="st">"nconst"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb81-14"><a href="#cb81-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(primaryName, category, birthYear, deathYear)  <span class="co"># Select relevant info</span></span>
+<span id="cb81-15"><a href="#cb81-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-16"><a href="#cb81-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Filter for those who are still alive (deathYear is NA)</span></span>
+<span id="cb81-17"><a href="#cb81-17" aria-hidden="true" tabindex="-1"></a>still_alive <span class="ot">&lt;-</span> key_talent_info <span class="sc">%&gt;%</span></span>
+<span id="cb81-18"><a href="#cb81-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(deathYear))</span>
+<span id="cb81-19"><a href="#cb81-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-20"><a href="#cb81-20" aria-hidden="true" tabindex="-1"></a>still_alive <span class="sc">|&gt;</span></span>
+<span id="cb81-21"><a href="#cb81-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
+<span id="cb81-22"><a href="#cb81-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">"Key talent from Schindler's List - Still Alive"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="zeuhavnnyh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zeuhavnnyh table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#zeuhavnnyh thead, #zeuhavnnyh tbody, #zeuhavnnyh tfoot, #zeuhavnnyh tr, #zeuhavnnyh td, #zeuhavnnyh th {
+  border-style: none;
+}
+
+#zeuhavnnyh p {
+  margin: 0;
+  padding: 0;
+}
+
+#zeuhavnnyh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#zeuhavnnyh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#zeuhavnnyh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#zeuhavnnyh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#zeuhavnnyh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#zeuhavnnyh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#zeuhavnnyh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#zeuhavnnyh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#zeuhavnnyh .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#zeuhavnnyh .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#zeuhavnnyh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zeuhavnnyh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#zeuhavnnyh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#zeuhavnnyh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#zeuhavnnyh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zeuhavnnyh .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#zeuhavnnyh .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#zeuhavnnyh .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#zeuhavnnyh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zeuhavnnyh .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#zeuhavnnyh .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zeuhavnnyh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#zeuhavnnyh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zeuhavnnyh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zeuhavnnyh .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zeuhavnnyh .gt_left {
+  text-align: left;
+}
+
+#zeuhavnnyh .gt_center {
+  text-align: center;
+}
+
+#zeuhavnnyh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#zeuhavnnyh .gt_font_normal {
+  font-weight: normal;
+}
+
+#zeuhavnnyh .gt_font_bold {
+  font-weight: bold;
+}
+
+#zeuhavnnyh .gt_font_italic {
+  font-style: italic;
+}
+
+#zeuhavnnyh .gt_super {
+  font-size: 65%;
+}
+
+#zeuhavnnyh .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#zeuhavnnyh .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#zeuhavnnyh .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#zeuhavnnyh .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#zeuhavnnyh .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#zeuhavnnyh .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#zeuhavnnyh .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#zeuhavnnyh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#zeuhavnnyh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_heading">
+<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border">Key talent from Schindler's List - Still Alive</th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="primaryName" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">primaryName</th>
+<th id="category" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">category</th>
+<th id="birthYear" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">birthYear</th>
+<th id="deathYear" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">deathYear</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryName">Liam Neeson</td>
+<td class="gt_row gt_left" headers="category">actor</td>
+<td class="gt_row gt_right" headers="birthYear">1952</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryName">Ralph Fiennes</td>
+<td class="gt_row gt_left" headers="category">actor</td>
+<td class="gt_row gt_right" headers="birthYear">1962</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryName">Ben Kingsley</td>
+<td class="gt_row gt_left" headers="category">actor</td>
+<td class="gt_row gt_right" headers="birthYear">1943</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryName">Jonathan Sagall</td>
+<td class="gt_row gt_left" headers="category">actor</td>
+<td class="gt_row gt_right" headers="birthYear">1959</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryName">Shmuel Levy</td>
+<td class="gt_row gt_left" headers="category">actor</td>
+<td class="gt_row gt_right" headers="birthYear">1962</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryName">Steven Spielberg</td>
+<td class="gt_row gt_left" headers="category">director</td>
+<td class="gt_row gt_right" headers="birthYear">1946</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="primaryName">Thomas Keneally</td>
+<td class="gt_row gt_left" headers="category">writer</td>
+<td class="gt_row gt_right" headers="birthYear">1935</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="primaryName">Steven Zaillian</td>
+<td class="gt_row gt_left" headers="category">writer</td>
+<td class="gt_row gt_right" headers="birthYear">1953</td>
+<td class="gt_row gt_right" headers="deathYear">NA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="the-pitch" class="level2">
+<h2 class="anchored" data-anchor-id="the-pitch">The Pitch</h2>
+<blockquote class="blockquote">
+<p>From director Christopher Nolan, the visionary mind between <em>Oppenheimer</em>,<br>
+From actor Leonardo DiCaprio, a Hollywood icon,<br>
+From actor Timothee Chalamet, the star of <em>Dune</em> movie series,<br>
+Comes a rich historical drama<br>
+A story of war, love, will power, and humanity<br>
+Coming soon to a theater near you.</p>
+</blockquote>
+
+
 </section>
 </section>
 
