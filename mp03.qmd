@@ -42,7 +42,7 @@ president <- read.csv("1976-2020-president.csv")
 
 ## Data II
 
-### Task 1: Download Congressional Shapefiles 1976-2012
+#### Task 1: Download Congressional Shapefiles 1976-2012
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -79,7 +79,7 @@ get_boundary_lines("districts112")
 
 ## Data III
 
-### Task 2: Download Congressional Shapefiles 2014-2022
+#### Task 2: Download Congressional Shapefiles 2014-2022
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -186,11 +186,11 @@ census_2022("tl_2022_us_cd116.zip")
 
 *Initial Exploration of Vote Count Data*
 
-### Task 3: 
+#### Task 3: 
 
 1.  Which states have gained and lost the most seats in the US House of Representatives between 1976 and 2022?
 
-
+    Florida has gained the most seats, with a difference of 43, and Michigan has lost the most, with a difference of -46. 
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -223,6 +223,8 @@ seats_change |>
 ```
 
 2.  Are there any elections in our data where the election would have had a different outcome if the “fusion” system was not used and candidates only received the votes their received from their “major party line” (Democrat or Republican) and not their total number of votes across all lines?
+
+    Yes, 33 elections would have had a different outcome without the fusion system. 
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -274,6 +276,8 @@ datatable(ny_different_outcome,
 
 3.  Do presidential candidates tend to run ahead of or run behind congressional candidates in the same state? That is, does a Democratic candidate for president tend to get more votes in a given state than all Democratic congressional candidates in the same state?
 
+    Using the example of Democratic candidates, yes, it seems like presidential candidates received more votes in the same states. 
+
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
 # Filter for Democratic candidates in presidential data
@@ -315,9 +319,9 @@ ggplot(votes_long, aes(x = state_po, y = votes, fill = vote_type)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
-**Importing and Plotting Shape File Data**
+*Importing and Plotting Shape File Data*
 
-### Task 4
+#### Task 4
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -335,7 +339,7 @@ shapes <- read_shp_from_zip(shpfile)
 
 ```
 
-### Task 5: Chloropleth Visualization of the 2000 Presidential Election Electoral College Results
+#### Task 5: Chloropleth Visualization of the 2000 Presidential Election Electoral College Results
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -376,7 +380,7 @@ ggplot(shapes_us_2000,
 
 ```
 
-### Task 6: Advanced Chloropleth Visualization of Electoral College Results
+#### Task 6: Advanced Chloropleth Visualization of Electoral College Results
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -414,7 +418,7 @@ ggplot(shapes_us_multi, aes(geometry = geometry, fill = party_simplified)) +
 
 ```
 
-**Comparing the Effects of ECV Allocation Rules**
+*Comparing the Effects of ECV Allocation Rules*
 
 First I find the ECV for each state.
 
@@ -561,7 +565,7 @@ kable(election_winner_proportional, caption = "Winners of U.S. Presidential Elec
 
 -   National Proportional
 
-To determine the national proportional, I need to know the total ECVs; it is 538, based from the National Archives and Records Administration. https://www.archives.gov/electoral-college/about#:\~:text=The%20Electoral%20College%20consists%20of,of%20Representatives%20plus%20two%20Senators.
+To determine the national proportional, I need to know the total ECVs; it is 538, based from the [National Archives and Records Administration](https://www.archives.gov/electoral-college/about#:\~:text=The%20Electoral%20College%20consists%20of,of%20Representatives%20plus%20two%20Senators).
 
 ```{r warning=FALSE, message=FALSE, error=FALSE}
 #| code-fold: true
@@ -595,4 +599,12 @@ kable(election_winner_national_proportional, caption = "Winners of U.S. Presiden
 
 ```
 
-### Task 7: Evaluating Fairness of ECV Allocation Schemes
+#### Task 7: Evaluating Fairness of ECV Allocation Schemes
+
+If "fair" is defined as representing the preferences of all voters across the United States, then the National Proportional strategy is the most fair as every citizen has equal voice and candidates will have to campaign more heavily throughout each state. This can also make candiates closer to the citizens and really engage with various communities in the United States. 
+
+We see that in 2000, Al Gore would have won the election if using the national prportional strategy and in 2016, Hillary Clinton would have also won. 
+
+
+
+
