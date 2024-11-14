@@ -3,7 +3,7 @@ title: "Political Fact-Check"
 author: "Gracie Zheng"
 editor: visual
 ---
-
+ 
 # Do Proportional Electoral College Allocations Yield a More Representative Presidency?
 
 This report is a political fact check, investigating the claim that the US Electoral College systematically biases election results away from the vox populi.
