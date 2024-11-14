@@ -601,7 +601,7 @@ kable(election_winner_national_proportional, caption = "Winners of U.S. Presiden
 
 #### Task 7: Evaluating Fairness of ECV Allocation Schemes
 
-If "fair" is defined as representing the preferences of all voters across the United States, then the National Proportional strategy is the most fair as every citizen has equal voice and candidates will have to campaign more heavily throughout each state. This can also make candiates closer to the citizens and really engage with various communities in the United States. 
+If "fair" is defined as representing the preferences of all voters across the United States, then the National Proportional strategy is the most fair as every citizen has equal voice and candidates will have to campaign more heavily throughout each state. This can also make candidates closer to the citizens and engage with various communities in the United States. 
 
 We see that in 2000, Al Gore would have won the election if using the national prportional strategy and in 2016, Hillary Clinton would have also won. 
 
