@@ -3,3 +3,391 @@ title: "Political Fact-Check"
 author: "Gracie Zheng"
 editor: visual
 ---
+
+Data I
+
+```{r}
+
+library(dplyr)
+library(kableExtra)
+library(DT)
+library(ggplot2)
+library(tidyr)
+library(scales)
+library(sf)
+library(gganimate)
+```
+
+```{r}
+#location of files
+setwd("C:/Users/greazy/Documents/STA9750-2024-FALL")
+
+house <- read.csv("1976-2022-house.csv")
+president <- read.csv("1976-2020-president.csv")
+```
+
+Data II
+
+Task 1
+
+```{r}
+get_boundary_lines <- function(fname){
+    BASE_URL <- "https://cdmaps.polisci.ucla.edu/shp/"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL, fname_ext)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+
+# 94 to 112 : 1976 to 2012
+get_boundary_lines("districts094")
+get_boundary_lines("districts095")
+get_boundary_lines("districts096")
+get_boundary_lines("districts097")
+get_boundary_lines("districts098")
+get_boundary_lines("districts099")
+get_boundary_lines("districts100")
+get_boundary_lines("districts101")
+get_boundary_lines("districts102")
+get_boundary_lines("districts103")
+get_boundary_lines("districts104")
+get_boundary_lines("districts105")
+get_boundary_lines("districts106")
+get_boundary_lines("districts107")
+get_boundary_lines("districts108")
+get_boundary_lines("districts109")
+get_boundary_lines("districts110")
+get_boundary_lines("districts111")
+get_boundary_lines("districts112")
+```
+
+Data III
+
+Task 2
+
+```{r}
+
+census_2014 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2014/CD/tl_2014_us_cd114.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2014("tl_2014_us_cd114.zip")
+
+census_2015 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2015/CD/tl_2015_us_cd114.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2015("tl_2015_us_cd114.zip")
+
+census_2016 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2016/CD/tl_2016_us_cd115.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2016("tl_2016_us_cd115.zip")
+
+census_2017 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2017/CD/tl_2017_us_cd115.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2017("tl_2017_us_cd115.zip")
+
+census_2018 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2018/CD/tl_2018_us_cd116.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2018("tl_2018_us_cd116.zip")
+
+census_2019 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2019/CD/tl_2019_us_cd116.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2019("tl_2019_us_cd116.zip")
+
+census_2020 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2020/CD/tl_2020_us_cd116.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2020("tl_2020_us_cd116.zip")
+
+census_2021 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2021/CD/tl_2021_us_cd116.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2021("tl_2021_us_cd116.zip")
+
+census_2022 <- function(fname){
+    BASE_URL <- "www2.census.gov/geo/tiger/TIGER2022/CD/tl_2022_us_cd116.zip"
+    fname_ext <- paste0(fname, ".zip")
+    if(!file.exists(fname_ext)){
+        FILE_URL <- paste0(BASE_URL)
+        download.file(FILE_URL, 
+                      destfile = fname_ext)
+    }
+}
+census_2022("tl_2022_us_cd116.zip")
+```
+
+Initial Exploration of Vote Count Data
+
+1.  Which states have gained and lost the most seats in the US House of Representatives between 1976 and 2022?
+
+```{r}
+
+# Filter data for 1976 and 2022
+house_1976 <- subset(house, year == 1976)
+house_2022 <- subset(house, year == 2022)
+
+# Count the number of seats per state in 1976 and 2022
+seats_1976 <- aggregate(state_po ~ state, data = house_1976, FUN = length)
+seats_2022 <- aggregate(state_po ~ state, data = house_2022, FUN = length)
+
+# Rename columns for clarity
+colnames(seats_1976) <- c("state", "seats_1976")
+colnames(seats_2022) <- c("state", "seats_2022")
+
+seats_change <- merge(seats_1976, seats_2022, by = "state", all = TRUE)
+
+seats_change$seat_diff <- seats_change$seats_2022 - seats_change$seats_1976
+
+# Sort to find the states with the most gain or loss
+seats_change <- seats_change[order(seats_change$seat_diff, decreasing = TRUE), ]
+
+seats_change %>%
+  mutate(seat_diff = ifelse(seat_diff > 0, 
+                            cell_spec(seat_diff, color = "green"), 
+                            cell_spec(seat_diff, color = "red"))) %>%
+  kable("html", escape = FALSE, caption = "Change in House Seats by State (1976-2022)") %>%
+  kable_styling("striped", full_width = F)
+```
+
+2.  Are there any elections in our data where the election would have had a different outcome if the “fusion” system was not used and candidates only received the votes their received from their “major party line” (Democrat or Republican) and not their total number of votes across all lines?
+
+```{r}
+
+# Filter to only include New York elections (where fusion voting applies)
+ny_house <- subset(house, state_po == "NY")
+
+ny_house <- ny_house %>%
+  filter(!candidate %in% c("BLANK VOTE/SCATTERING"))
+
+# Separate out major party line votes (fusion_ticket == FALSE)
+ny_major_party_votes <- ny_house %>%
+  filter(fusion_ticket == FALSE) %>%  # Only include votes cast on major party lines
+  group_by(year, district, candidate) %>%
+  summarise(major_party_votes = sum(candidatevotes, na.rm = TRUE)) %>%
+  ungroup()
+
+# Sum total votes across all lines (fusion votes included)
+ny_total_votes <- ny_house %>%
+  group_by(year, district, candidate) %>%
+  summarise(total_votes = sum(totalvotes, na.rm = TRUE)) %>%
+  ungroup()
+
+# Merge total votes and major party-only votes
+ny_results <- merge(ny_total_votes, ny_major_party_votes, by = c("year", "district", "candidate"), all.x = TRUE)
+
+# Get the winners under both systems: total votes (fusion) and major-party-only votes
+ny_results <- ny_results %>%
+  group_by(year, district) %>%
+  mutate(
+    fusion_winner = candidate[which.max(total_votes)],  # Winner using total (fusion) votes
+    major_party_winner = ifelse(sum(major_party_votes) > 0, candidate[which.max(major_party_votes)], NA)  # Check if major party votes exist
+  ) %>%
+  ungroup()
+
+# Find cases where the winners differ
+ny_different_outcome <- ny_results %>%
+  filter(fusion_winner != major_party_winner) %>%
+  select(year, district, fusion_winner, major_party_winner) %>%
+  distinct()
+
+
+# Display an interactive table with DT::datatable
+datatable(ny_different_outcome, 
+          options = list(pageLength = 5, autoWidth = TRUE), 
+          caption = 'New York Elections with Different Outcomes Under Fusion Voting')
+
+```
+
+3.  Do presidential candidates tend to run ahead of or run behind congressional candidates in the same state? That is, does a Democratic candidate for president tend to get more votes in a given state than all Democratic congressional candidates in the same state?
+
+```{r}
+
+# Filter for Democratic candidates in presidential data
+dem_presidential_votes <- president %>%
+  filter(party_detailed == "DEMOCRAT") %>%
+  group_by(year, state_po) %>%
+  summarise(presidential_votes = sum(candidatevotes, na.rm = TRUE)) %>%
+  ungroup()
+
+# Filter for Democratic candidates in congressional data
+dem_congressional_votes <- house %>%
+  filter(party == "DEMOCRAT") %>%
+  group_by(year, state_po) %>%
+  summarise(congressional_votes = sum(candidatevotes, na.rm = TRUE)) %>%
+  ungroup()
+
+# Merge presidential and congressional votes by year and state
+votes_comparison <- merge(dem_presidential_votes, dem_congressional_votes, by = c("year", "state_po"))
+
+# Calculate difference to see where presidential votes are higher
+votes_comparison <- votes_comparison %>%
+  mutate(president_more_votes = presidential_votes < congressional_votes)
+
+votes_long <- votes_comparison %>%
+  select(year, state_po, presidential_votes, congressional_votes) %>%
+  pivot_longer(cols = c("presidential_votes", "congressional_votes"),
+               names_to = "vote_type",
+               values_to = "votes")
+
+# Plot with ggplot2
+ggplot(votes_long, aes(x = state_po, y = votes, fill = vote_type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Democratic Presidential and Congressional Votes by State",
+       x = "State",
+       y = "Number of Votes",
+       fill = "Vote Type") +
+  scale_y_continuous(labels = comma) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+Importing and Plotting Shape File Data
+
+Task 4
+
+```{r}
+
+##-
+read_shp_from_zip <- function(shpfile) {
+  td <- tempdir()
+  zip_contents <- unzip(shpfile, exdir = td)
+  shp <- zip_contents[grepl("\\.shp$", zip_contents)]
+  us_sf <- read_sf(shp)
+  return(us_sf) 
+}
+
+shpfile <- "districts106.zip"
+shapes <- read_shp_from_zip(shpfile)
+
+```
+
+Task 5: Chloropleth Visualization of the 2000 Presidential Election Electoral College Results
+
+```{r}
+president_2000 <- president %>%
+  filter(year == 2000) %>%
+  group_by(state, party_simplified) %>%
+  summarise(total_votes = sum(candidatevotes, na.rm = TRUE)) %>%
+  group_by(state) |> 
+  slice_max(total_votes, n = 1) |>
+  ungroup() |>
+  select(state, party_simplified)
+
+shapes_us_2000 <- shapes |>
+  mutate(STATENAME = toupper(trimws(STATENAME))) |> # need to match the characters from both tables to join correctly
+  left_join(
+    president_2000,
+    join_by(STATENAME == state)
+  )
+
+
+ggplot(shapes_us_2000,
+  aes(
+    geometry = geometry,
+    fill = party_simplified
+  ),
+  color = "black"
+) +
+  geom_sf() +
+  scale_fill_manual(values = c("DEMOCRAT" = "skyblue3", "REPUBLICAN" = "firebrick1")) +
+  theme_minimal() +
+  labs(
+    title = "Presidential Election State Results 2000",
+    subtitle = "Choropleth Map of U.S. Districts",
+    fill = "Winning Party"
+  ) +
+  theme(legend.position = "bottom") +
+  coord_sf(xlim = c(-130, -60), ylim = c(20, 50), expand = FALSE)
+
+```
+
+Task 6: Advanced Chloropleth Visualization of Electoral College Results
+
+```{r}
+
+# Prepare the election data for multiple years
+president_multi_year <- president %>%
+  filter(year %in% c(2000, 2004, 2008, 2012, 2016, 2020)) %>%  # Filter for specific years
+  group_by(year, state, party_simplified) %>%
+  summarise(total_votes = sum(candidatevotes, na.rm = TRUE)) %>%
+  group_by(year, state) %>%
+  slice_max(total_votes, n = 1) %>%  # Get the party with max votes for each state and year
+  ungroup() %>%
+  select(year, state, party_simplified)
+
+# Join with shapefile data
+shapes_us_multi <- shapes %>%
+  mutate(STATENAME = toupper(trimws(STATENAME))) %>%  # Ensure consistent capitalization and trimming
+  left_join(
+    president_multi_year,
+    by = c("STATENAME" = "state")  # Join by state name
+  )
+
+# Plot with facets for each year
+ggplot(shapes_us_multi, aes(geometry = geometry, fill = party_simplified)) +
+  geom_sf(color = "black") +
+  scale_fill_manual(values = c("DEMOCRAT" = "skyblue3", "REPUBLICAN" = "firebrick1")) +
+  theme_minimal() +
+  labs(
+    title = "Presidential Election State Results Over Time",
+    subtitle = "Faceted Choropleth Map of U.S. Districts by Year",
+    fill = "Winning Party"
+  ) +
+  facet_wrap(~ year) +  # Facet by year to create separate maps for each election
+  theme(legend.position = "bottom") +
+  coord_sf(xlim = c(-130, -60), ylim = c(20, 50), expand = FALSE)
+
+```
